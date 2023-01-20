@@ -1,0 +1,37 @@
+version: "3"
+services:
+  server:
+    build: ./DrinkAndMenuServer
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+    links:
+      - db
+    environment:
+      DB_URL: postgresql://postgres:postgres@db:5432/postgres
+      CLIENT_HOST: localhost
+      CLIENT_PORT: 8080 
+
+  client:
+    build: ./client
+    environment:
+      - REACT_APP_DRINK_API_URL=3001
+    ports:
+      - "8080:80"
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+    
+  db:
+    image: 'postgres:14'
+    ports: 
+      - '5432:5432'
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PGHOST=db 
+    volumes:
+      - ./db-data/:/var/lib/postgresql/data/
+
+      
