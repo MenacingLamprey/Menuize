@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Drink } from "../Models/Drink";
+import { DrinkIngredient } from "../Models/DrinkIngredient";
 
 export const getDrink = async (req :Request , res : Response ) => {
     try{
@@ -23,8 +24,8 @@ export const getAllDrinks =async (req :Request, res :Response) => {
 
 export const createDrink = async (req : Request, res :Response) => {
     try {
-        const {drinkName} = req.body;
-        const newDrink = await Drink.create({name :drinkName})
+        const {drinkName, description, glass ,numOfIngredients} = req.body;
+        const newDrink = await Drink.create({name :drinkName, description, glass, numOfIngredients})
         res.status(201).send({error :false, res : newDrink})
     } catch (e) {
         console.log(e);
@@ -32,3 +33,12 @@ export const createDrink = async (req : Request, res :Response) => {
     }
 }
 
+export const addIngredientsToDrink = async (req : Request , res: Response) => {
+    try {
+        const {drinkIngredients} = req.body
+        const addedIngredient = await DrinkIngredient.bulkCreate(drinkIngredients)
+    } catch (e) {
+        console.log(e)
+        res.status(500).send({error : true, res : "Error Adding Ingredients"})
+    }
+}
