@@ -22,6 +22,7 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
+    public userId ? : string
     public ingredients? : Ingredient[]
     public drinkIngredients ? : IDrinkIngredient[]
   }

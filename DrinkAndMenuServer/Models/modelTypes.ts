@@ -5,7 +5,7 @@ export interface IIngredient {
     family : string
     recipe? : IIngredient[]
     drinks ? : IDrink[]
-    creater? : IUser
+    userId ? : string
 }
 
 export interface IDrink {
@@ -15,6 +15,7 @@ export interface IDrink {
     glass : string
     numOfIngredients : number
     ingredients? : IIngredient[]
+    userId ? : string
 }
 
 export interface IUser {
@@ -22,6 +23,7 @@ export interface IUser {
     username: string;
     password : string;
     drinks? :IDrink[]
+    ingredients? : IIngredient[]
 }
 
 export type IMeasurement = "oz" | "ml" | "bsp" | "tsp" | "tbsp" | "dash" 

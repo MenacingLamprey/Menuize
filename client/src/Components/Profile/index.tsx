@@ -3,7 +3,7 @@ import { profile } from '../../apiServices/authApi';
 
 const initialState = {
     username : '',
-  };
+};
 
 export const Profile =() => {
     const [state, setState] = useState(initialState);
@@ -22,7 +22,7 @@ export const Profile =() => {
                 };
                 })
             } else {
-                console.log('No user info found 😞');
+                console.log('No user info found');
             }
         }
 
@@ -32,6 +32,7 @@ export const Profile =() => {
     
 
     return (<div>
-        Welcome To Profile {state.username}
+       <h1> Welcome To Profile {state.username}</h1>
+       
     </div>)
 }

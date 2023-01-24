@@ -22,9 +22,11 @@ export class Ingredient extends Model<IIngredient, IngredientCreationAttributes>
     public removeDrink!: HasManyAddAssociationMixin<Ingredient, string>;
     public addIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
     public removeIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
-
+  
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+
+    userId ? : string
 
     public static associations: {
         recipe: Association<Ingredient, Ingredient>;

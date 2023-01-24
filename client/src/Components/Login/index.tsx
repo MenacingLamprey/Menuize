@@ -20,7 +20,6 @@ export const Login = ({ setIsAuthenticated} : IProps) => {
     e.preventDefault();
     const user = { username, password };
     const res = await login(user);
-    console.log(res)
     if (res.error) {
       alert(`${res.message}`);
       setUsername('')

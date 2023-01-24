@@ -2,7 +2,8 @@ import { Association,
   HasManyAddAssociationMixin,
   Model,
   Optional,
-  DataTypes,} from "sequelize";
+  DataTypes,
+  HasManyGetAssociationsMixin,} from "sequelize";
 
 import { sequelize } from ".";
 import { Drink } from "./Drink";
@@ -23,6 +24,9 @@ export class User extends Model<IUser, UserCreationAttributes> {
   public removeDrink!: HasManyAddAssociationMixin<User, string>;
   public addIngredient!: HasManyAddAssociationMixin<User, string>;
   public removeIngredient!: HasManyAddAssociationMixin<User, string>;
+
+  public getIngredients!:  HasManyGetAssociationsMixin<Ingredient>
+  public getDrinks!:  HasManyGetAssociationsMixin<Drink>
 
   public static associations: {
     drinks: Association<User, Drink>;
