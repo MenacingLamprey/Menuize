@@ -1,7 +1,7 @@
 export interface IIngredient {
     id : number
     name: string
-    instructions : string
+    instructions? : string
     family : string
     recipe? : IIngredient[]
     drinks ? : IDrink[]

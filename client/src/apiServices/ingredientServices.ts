@@ -10,20 +10,20 @@ export const fetchIngredient =async (name :string) => {
   return data
 }
 
-export const fetchAllUserIngredients = async () => {
-  const res = await fetch(`${apiUrl}/all`)
-  console.log(res)
+export const fetchAllUserIngredients = async (username : string) => {
+  const res = await fetch(`${apiUrl}/all/${username}`)
   const data = await res.json()
-  return data.res
+  return data
 }
 
-export const createIngredient = async (ingredient : IIngredient) => {
+export const createIngredient = async (ingredient : IIngredient, accessToken : string) => {
   const fetchOptions = { 
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(ingredient)
+    body: JSON.stringify({ingredient})
   }
   const res = await fetch(`${apiUrl}/create`, fetchOptions)
   const data = await res.json()

@@ -11,8 +11,7 @@ interface IProps {
 }
 
 export const Login = ({ setIsAuthenticated} : IProps) => {
-
-  let navigate = useNavigate();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 

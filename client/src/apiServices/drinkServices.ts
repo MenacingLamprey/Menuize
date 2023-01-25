@@ -12,7 +12,6 @@ export const fetchDrink =async (name :string) => {
 
 export const fetchAllUserDrinks = async () => {
   const res = await fetch(`${apiUrl}/all`)
-  console.log(res)
   const data = await res.json()
   return data.res
 }

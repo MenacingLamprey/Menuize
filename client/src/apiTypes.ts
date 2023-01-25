@@ -1,7 +1,7 @@
 export interface IIngredient {
   id? : number
   name: string
-  instructions : string
+  instructions? : string
   family : string
   recipe? : IIngredient[]
   drinks ? : IDrink[]
@@ -35,3 +35,9 @@ export interface IDrinkIngredient {
   DrinkId? : number
   IngredientId? :number
 } 
+export interface IAuth {
+    authenticated : boolean;
+    login : Function;
+    logout :Function;
+    isAuthenticated : Function;
+  }

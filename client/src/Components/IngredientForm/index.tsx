@@ -13,22 +13,25 @@ export const IngredientForm = () => {
       setIngredientName('')
       setInstructions('')
       setFamily('')
-      const ingredient : IIngredient = {name : ingredientName, instructions, family}
-      const result = await createIngredient(ingredient)
+      const ingredient : IIngredient = {name : ingredientName, family}
+      const accessToken = localStorage.getItem('accessToken')
+      const result = accessToken && await createIngredient(ingredient, accessToken)
     }
 
     return(<form onSubmit={e => submit(e)}>
-        <label>Drink Name</label>
+        <label>Ingredient Name</label>
         <input
           name ={ingredientName}
           value = {ingredientName}
           onChange = {(e) =>{setIngredientName(e.target.value)}}
         />
+        {/* <label>Instructions</label>
         <input
           name ={instructions}
           value = {instructions}
           onChange = {(e) =>{setInstructions(e.target.value)}}
-        />
+        /> */}
+        <label>Family</label>
         <input
           name ={family}
           value = {family}

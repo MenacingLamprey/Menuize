@@ -27,7 +27,6 @@ export const authMiddleware = async (req : RequestWithUser, res :Response, next 
     const user = await User.findOne({where : {uid:_id}})
     if (!user) return res.sendStatus(401);
     req.user = user;
-
     next(req,res);
   } catch (error) {
     res.sendStatus(401);

@@ -48,7 +48,7 @@ Ingredient.init(
     },
     instructions: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
     family: {
       type: DataTypes.TEXT,
