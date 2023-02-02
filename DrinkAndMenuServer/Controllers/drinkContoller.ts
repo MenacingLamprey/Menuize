@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Drink } from "../Models/Drink";
 import { DrinkIngredient } from "../Models/DrinkIngredient";
+import { User } from "../Models/User";
 
 export const getDrink = async (req :Request , res : Response ) => {
     try{
@@ -15,10 +16,13 @@ export const getDrink = async (req :Request , res : Response ) => {
 
 export const getAllDrinks =async (req :Request, res :Response) => {
     try {
-        const drinks = await Drink.findAll({});
-        res.status(200).send({error :false, res : drinks})
+        const { username } = req.params
+            User.findOne({where : {username}})
+            .then(data => data?.getDrinks())
+            .then(drinks => res.status(200).send({error : false, res : drinks}))
+            .catch(e=> res.status(500).send({error : true, res : e}))
     } catch (e) {
-        res.status(500).send({error : true, res : "Error Getting All Drinks"})
+        res.status(500).send({error : true, res : "Error Getting All Ingredients"})
     }
 }
 

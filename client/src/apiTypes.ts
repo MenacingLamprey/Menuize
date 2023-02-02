@@ -8,6 +8,10 @@ export interface IIngredient {
   userId ? : string
 }
 
+export interface IMemoryUser {
+  username : string
+}
+
 export interface IDrink {
   id? : number
   name :string;

@@ -12,8 +12,7 @@ export const fetchIngredient =async (name :string) => {
 
 export const fetchAllUserIngredients = async (username : string) => {
   const res = await fetch(`${apiUrl}/all/${username}`)
-  const data = await res.json()
-  return data
+  return await res.json()
 }
 
 export const createIngredient = async (ingredient : IIngredient, accessToken : string) => {

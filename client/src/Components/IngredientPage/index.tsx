@@ -1,29 +1,20 @@
-import { useState, useEffect, useContext } from "react"
+import { useState, useEffect, useContext} from "react"
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchAllUserIngredients } from "../../apiServices/ingredientServices";
 import { IIngredient } from "../../apiTypes";
-import { UserContext } from "../../Contexts/UserContext";
 import { IngredientForm } from "../IngredientForm";
 import { IngredientList } from "../IngredientList";
+import { fetchIngredients } from "../../apiServices/fetchIngredients";
+import { UserContext } from "../../Contexts/UserContext";
 
 const initialIngredient : IIngredient = {name : "", instructions :"", family :""}
 
 export const IngredientPage = () => {
-    const [ingredients, setIngredients] = useState([initialIngredient])
     const [currentUser] = useContext(UserContext);
-
-    useEffect(() => {
-        getUserIngredients();
-    },[currentUser])
-
-    const getUserIngredients = async () => {
-        console.log(currentUser)
-        if(currentUser){
-            const result = await fetchAllUserIngredients(currentUser?.username)
-            const ingredients = result.res;
-            setIngredients(ingredients)
-        }
-    }
+    const username = currentUser?.username || localStorage.getItem("username") || ""
+    const results = useQuery(["ingredients", username], fetchIngredients);
+    
+    const ingredients = results?.data?.res || []
 
     return (<div>
         <h4>Here is a list of ingredients you've registered</h4>

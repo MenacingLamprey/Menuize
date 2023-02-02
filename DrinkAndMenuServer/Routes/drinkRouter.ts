@@ -4,6 +4,6 @@ import { getDrink, createDrink, getAllDrinks } from '../Controllers/drinkContoll
 
 export const drinkRouter = Router()
 
-drinkRouter.get('/all', getAllDrinks)
+drinkRouter.get('/all/:username', getAllDrinks)
 drinkRouter.get('/:name', getDrink)
 drinkRouter.post('/create', createDrink)

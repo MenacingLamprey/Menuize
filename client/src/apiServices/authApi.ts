@@ -38,9 +38,6 @@ export const profile = async (accessToken : string) => {
       Authorization: `Bearer ${accessToken}`,
     },
   })
-    .then((res) =>  res.json()
-    )
-    .catch((err) => console.log(err));
 };
 
 export const logout = (tokenName : string) => {

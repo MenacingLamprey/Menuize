@@ -38,7 +38,7 @@ export const profile = async (req : RequestWithUser, res : Response) => {
 try {
     if (req.user){
         const { uid, username } = req.user;
-        const user = { uid, username };
+        const user = { username };
         return res.status(200).send(user);
     }
     res.status(404).send({ error : true, res: 'Resource not found' });

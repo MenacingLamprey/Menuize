@@ -10,10 +10,9 @@ export const fetchDrink =async (name :string) => {
   return data
 }
 
-export const fetchAllUserDrinks = async () => {
-  const res = await fetch(`${apiUrl}/all`)
-  const data = await res.json()
-  return data.res
+export const fetchAllUserDrinks = async (username : string) => {
+  const res = await fetch(`${apiUrl}/all/${username}`)
+  return await res.json()
 }
 
 export const createDrink = async (drink : IDrink) => {
