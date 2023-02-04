@@ -44,7 +44,7 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
       },
       glass: {
         type: DataTypes.TEXT,
-        allowNull: false,
+        allowNull: true,
       },
       numOfIngredients : {
         type :DataTypes.INTEGER

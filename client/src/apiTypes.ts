@@ -15,7 +15,7 @@ export interface IMemoryUser {
 export interface IDrink {
   id? : number
   name :string;
-  description : string
+  description? : string
   glass : string
   numOfIngredients : number
   ingredients? : IIngredient[]

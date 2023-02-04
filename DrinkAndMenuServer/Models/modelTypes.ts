@@ -11,8 +11,8 @@ export interface IIngredient {
 export interface IDrink {
     id : number
     name :string;
-    description : string
-    glass : string
+    description? : string
+    glass? : string
     numOfIngredients : number
     ingredients? : IIngredient[]
     userId ? : string
