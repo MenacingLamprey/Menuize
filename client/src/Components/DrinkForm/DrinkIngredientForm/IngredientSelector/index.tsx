@@ -25,10 +25,8 @@ interface IProps {
 }
 
 export const IngredientSelector = (props : IProps) => {
-  const { potentialIngredients, visible, index, setValue, inputIngredient, getValues, trigger, selectionIngredientList } = props
+  const { potentialIngredients, visible, index, setValue, inputIngredient, selectionIngredientList } = props
   const { ref } = useComponentVisible(true);
-
-  console.log(selectionIngredientList)
 
   const selectFromList = (ingredient : string, index : number) => {
     setValue(`ingredients.${index}.ingredient`, ingredient)

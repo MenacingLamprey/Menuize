@@ -42,8 +42,16 @@ export const DrinkIngredientForm = (props : IProps) => {
     updatedIngredients[index] = textInput 
     setInputIngredients(updatedIngredients)
 
-    setSelectionList([])
-    console.log(selectionIngredientList)
+    ingredientChange(textInput)
+  }
+
+  const ingredientChange = (textInput : string) => {
+    setIsComponentVisible(true)
+    const ingredientList = potentialIngredients.filter(potentialIngredient => {
+      return potentialIngredient.name.toLowerCase().includes(textInput.toLowerCase())
+    }).map(ingredient => ingredient.name)
+
+    setSelectionList(ingredientList)
   }
 
   return ( <div>
