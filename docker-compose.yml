@@ -9,14 +9,14 @@ services:
     links:
       - db
     environment:
-      DB_URL: postgresql://postgres:postgres@db:5432/postgres
+      DB_URL: postgresql://postgres:postgres@db:5433/postgres
       CLIENT_HOST: localhost
       CLIENT_PORT: 8080 
 
   client:
     build: ./client
     environment:
-      - REACT_APP_DRINK_API_URL=3001
+      - VITE_DRINK_API_URL=3001
     ports:
       - "8080:80"
     volumes:

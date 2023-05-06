@@ -43,3 +43,5 @@ DrinkIngredient.init(
     tableName: "drinkIngredients",
   }
 );
+
+Drink.hasMany(DrinkIngredient)

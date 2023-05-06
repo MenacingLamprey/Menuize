@@ -1,6 +1,6 @@
 import { IUser } from "../apiTypes";
 
-const apiPort = process.env.REACT_APP_DRINK_API_URL || 3001
+const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 
 const apiUrl = `http://localhost:${apiPort}/users`;
 
@@ -17,6 +17,7 @@ export const register = (user :IUser) => {
 };
 
 export const login = (user :IUser) => {
+  console.log(`${apiUrl}/login`)
   return fetch(`${apiUrl}/login`, {
     method: 'POST',
     credentials: 'include',

@@ -1,26 +1,31 @@
-import {useContext} from "react"
-import { useQuery } from "@tanstack/react-query";
+import { useContext, useEffect } from "react"
 
-import { IIngredient } from "../../apiTypes";
-import { IngredientForm } from "../IngredientForm";
-import { IngredientList } from "../IngredientList";
-import { fetchIngredients } from "../../apiServices/fetchIngredients";
+import { IngredientForm } from "./IngredientForm";
+import { IngredientList } from "./IngredientList";
+import { fetchAllUserIngredients } from '../../apiServices'
 import { UserContext } from "../../Contexts/UserContext";
+import { IngredientContext } from "../../Contexts/IngredientContext";
 
-
-const initialIngredient : IIngredient = {name : "", instructions :"", family :""}
+import './styles.css'
 
 export const IngredientPage = () => {
-    const [currentUser] = useContext(UserContext);
-    const username = currentUser?.username || localStorage.getItem("username") || ""
-    const results = useQuery(["ingredients", username], fetchIngredients);
+  const [currentUser] = useContext(UserContext);
+  const username = currentUser?.username || localStorage.getItem("username") || ""
+  const [ingredients, setIngredients] = useContext(IngredientContext)
 
-    const ingredients = results?.data?.res || []
+  useEffect(()=>{
+    getUserIngredients(username)
+  },[])
 
-    return (<div>
-        <h4>Here is a list of ingredients you've registered</h4>
-        <IngredientList ingredients={ingredients} />
-        <h4>Would you like to create new ingredients to your register?</h4>
-        <IngredientForm />
-    </div>)
+  const getUserIngredients = async (user : string) => {
+    const userIngredients = await fetchAllUserIngredients(user);
+    setIngredients(userIngredients.res)
+  }
+
+  return (<div id ={"ingredient-page"}>
+    <h4>Here's a list of ingredients you've registered</h4>
+    <IngredientList ingredients={ingredients} />
+    <h4>Would you like to add a new ingredient to your register?</h4>
+    <IngredientForm />
+  </div>)
 }

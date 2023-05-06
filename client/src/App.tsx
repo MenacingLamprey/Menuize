@@ -14,6 +14,8 @@ import { IIngredient, IMemoryUser } from './apiTypes';
 
 import './App.css';
 import { DrinkPage } from './Components/DrinkPage';
+import { DrinkDetails } from './Components/DrinkDetails';
+import { IngredientDetails } from './Components/IngredientDetails';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,7 +30,8 @@ function App() {
   const initialState : boolean  = Auth.isAuthenticated()
   const [isAuthenticated, setIsAuthenticated] = useState(initialState);
   const currentUser = useState(null as IMemoryUser | null)
-  const currentIngredients = useState<IIngredient[]>([])
+  const currentIngredients = useState<IIngredient[]>([]);
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -40,6 +43,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path ="/ingredients" element={<IngredientPage />} />
           <Route path ="/drinks" element={<DrinkPage />} />
+          <Route path ="/drinks/:drinkName" element={<DrinkDetails />} />
+          <Route path ="/ingredients/:ingredientName" element={<IngredientDetails />} />
         </Routes>
       </QueryClientProvider>
       </IngredientContext.Provider>

@@ -29,9 +29,10 @@ export class Ingredient extends Model<IIngredient, IngredientCreationAttributes>
     userId ? : string
 
     public static associations: {
-        recipe: Association<Ingredient, Ingredient>;
-        drinks : Association<Drink, Ingredient>
-        creator : Association<User, Ingredient>;  
+      recipe: Association<Ingredient, Ingredient>;
+      drinks : Association<Drink, Ingredient>
+      creator : Association<User, Ingredient>;  
+      DrinkIngredient : Association<DrinkIngredient, Ingredient>
     };
 }
   
@@ -45,6 +46,7 @@ Ingredient.init(
     name: {
       type: DataTypes.TEXT,
       allowNull: false,
+      unique : true
     },
     instructions: {
       type: DataTypes.TEXT,
@@ -62,7 +64,7 @@ Ingredient.init(
   }
 );
 
-Ingredient.belongsToMany(Drink, { through: DrinkIngredient });
+Ingredient.belongsToMany(Drink, { through: DrinkIngredient});
 Drink.belongsToMany(Ingredient, { through: DrinkIngredient });
 
 Ingredient.belongsToMany(Ingredient, { as: "recipe", through: "ingredientRecipe" });

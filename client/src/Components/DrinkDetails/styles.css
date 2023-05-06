@@ -1,0 +1,23 @@
+#drink-details{
+  display :flex;
+  flex-direction: column;
+  align-self: center;
+  background-color: gray;
+  width: 30%;
+  justify-content: space-around;
+  align-items: center;
+}
+
+#glass{
+  display: flex;
+  justify-content: center;
+  height :25px;
+  align-items: center;
+}
+
+#method{
+  display: flex;
+  justify-content: center;
+  height :25px;
+  align-items: center;
+}

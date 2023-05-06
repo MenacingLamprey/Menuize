@@ -1,0 +1,16 @@
+#drink-list {
+  display: flex;
+  flex-wrap:wrap ;
+  list-style-type: '';
+  align-items: center;
+  justify-content: space-between;
+  background-color: gray;
+}
+
+.drink {
+  width:25%;
+  font-size: large;
+  padding:5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}

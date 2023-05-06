@@ -1,0 +1,15 @@
+#ingredient-list {
+  display: flex;
+  flex-wrap:wrap ;
+  list-style-type: '';
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ingredient {
+  width:30%;
+  font-size: large;
+  padding:5px;
+  margin-left: 5px;
+  margin-right: 5px;
+}

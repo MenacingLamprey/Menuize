@@ -1,11 +1,14 @@
 export interface IIngredient {
   id? : number
   name: string
-  instructions? : string
+  instructions? : string | null
   family : string
+  DrinkIngredient? :IDrinkIngredient
   recipe? : IIngredient[]
-  drinks ? : IDrink[]
+  Drinks ? : IDrink[]
   userId ? : string
+  updatedAt? : string
+  createdAt? :string
 }
 
 export interface IMemoryUser {
@@ -16,11 +19,15 @@ export interface IDrink {
   id? : number
   name :string;
   description? : string
+  method? :string
   glass : string
+  measures? : IDrinkIngredient[]
   numOfIngredients : number
-  ingredients? : IIngredient[]
+  Ingredients : IIngredient[]
   userId ? : string
 }
+
+
 
 export interface IUser {
   uid? : string
@@ -33,9 +40,9 @@ export interface IUser {
 export type IMeasurement = "oz" | "ml" | "bsp" | "tsp" | "tbsp" | "dash" 
 
 export interface IDrinkIngredient {
-  id : number
+  id? : number
   amount : number
-  measurement : IMeasurement
+  measurement : string
   DrinkId? : number
   IngredientId? :number
 } 

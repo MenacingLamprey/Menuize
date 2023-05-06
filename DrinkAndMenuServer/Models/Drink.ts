@@ -1,4 +1,4 @@
-import { Model, Optional, DataTypes, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin } from "sequelize";
+import { Model, Optional, DataTypes, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, Association } from "sequelize";
 
 import { sequelize } from ".";
 import { DrinkIngredient } from "./DrinkIngredient";
@@ -12,6 +12,7 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
     public name! :string
     public glass! : string
     public description! : string
+    public method! : string
 
     public addIngredients!: HasManyAddAssociationsMixin<Ingredient, string>
     public getIngredients!:  HasManyGetAssociationsMixin<Ingredient>
@@ -22,8 +23,14 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
 
+
+    public static associations: {
+      Ingredients : Association<Drink, Ingredient>
+    };
+    
     public userId ? : string
-    public ingredients? : Ingredient[]
+    public Ingredients? : Ingredient[]
+    public measures? : IDrinkIngredient[]
     public drinkIngredients ? : IDrinkIngredient[]
   }
   
@@ -38,13 +45,16 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
         type: DataTypes.TEXT,
         allowNull: false,
       },
+      method: {
+        type: DataTypes.TEXT,
+      },
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
       },
       glass: {
         type: DataTypes.TEXT,
-        allowNull: true,
+        allowNull: false,
       },
       numOfIngredients : {
         type :DataTypes.INTEGER

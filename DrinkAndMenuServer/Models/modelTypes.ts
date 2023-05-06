@@ -1,20 +1,23 @@
 export interface IIngredient {
-    id : number
+    id? : number
     name: string
     instructions? : string
     family : string
     recipe? : IIngredient[]
     drinks ? : IDrink[]
     userId ? : string
+    DrinkIngredient? : IDrinkIngredient
 }
 
 export interface IDrink {
     id : number
     name :string;
     description? : string
+    method? : string
     glass? : string
     numOfIngredients : number
-    ingredients? : IIngredient[]
+    drinkIngredients? : IDrinkIngredient[]
+    Ingredients? : IIngredient[]
     userId ? : string
 }
 

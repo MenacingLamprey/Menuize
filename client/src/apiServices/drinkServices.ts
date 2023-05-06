@@ -1,11 +1,18 @@
-import { IDrink } from "../apiTypes";
+import { IDrink, IIngredient } from "../apiTypes";
 
-const apiPort = process.env.REACT_APP_DRINK_API_URL || 3001
-
+const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 const apiUrl = `http://localhost:${apiPort}/drinks`;
 
-export const fetchDrink =async (name :string) => {
-  const res = await fetch(`${apiUrl}/${name}`)
+export const fetchUserDrink =async (drinkName :string, accessToken : string) => {
+  const fetchOptions = { 
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body : JSON.stringify({drinkName})
+  }
+  const res = await fetch(`${apiUrl}/getDrink`, fetchOptions)
   const data = await res.json()
   return data
 }
@@ -15,15 +22,32 @@ export const fetchAllUserDrinks = async (username : string) => {
   return await res.json()
 }
 
-export const createDrink = async (drink : IDrink) => {
+type extendedDrink = IDrink & {newIngredients : IIngredient[]}
+export const createDrink = async (drink : extendedDrink, accessToken : string) => {
   const fetchOptions = { 
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
     },
     body: JSON.stringify(drink)
   }
   const res = await fetch(`${apiUrl}/create`, fetchOptions)
+  const data = await res.json()
+  return data.res
+}
+
+
+export const editDrink = async (fields : unknown, accessToken : string) => {
+  const fetchOptions = { 
+    method: "PATCH",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(fields)
+  }
+  const res = await fetch(`${apiUrl}/edit`, fetchOptions)
   const data = await res.json()
   return data.res
 }

@@ -1,4 +1,4 @@
-import { fetchAllUserDrinks } from "./drinkServices";
+import { fetchAllUserDrinks, fetchUserDrink, editDrink } from "./drinkServices";
 import { fetchAllUserIngredients } from './ingredientServices'
 
-export {fetchAllUserDrinks, fetchAllUserIngredients}
+export {fetchAllUserDrinks, fetchUserDrink, fetchAllUserIngredients, editDrink}
