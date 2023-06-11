@@ -51,3 +51,17 @@ export const editDrink = async (fields : unknown, accessToken : string) => {
   const data = await res.json()
   return data.res
 }
+
+export const searchDrinksByIngredients = async (accessToken : string, ingredients : IIngredient[]) => {
+  const fetchOptions = { 
+    method: "POST",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ingredients})
+  }
+  const res = await fetch(`${apiUrl}/ingredient_search`, fetchOptions)
+  const data = await res.json();
+  return data.res
+}

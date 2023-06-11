@@ -27,7 +27,7 @@ export const getAllDrinks =async (req :Request, res :Response) => {
   try {
     const { username } = req.params
       User.findOne({where : {username}})
-      .then(data => data?.getDrinks())
+      .then(data => data?.getDrinks({include : 'Ingredients'}))
       .then(drinks => res.status(200).send({error : false, res : drinks}))
       .catch(e=> res.status(500).send({error : true, res : e}))
   } catch (e) {
@@ -104,10 +104,10 @@ const suitableCocktails = async(ingredientString : string) : Promise<Drink[] | u
     const [results] = await sequelize.query(
       `select d.name, d.id from drinks d join
       "drinkIngredients" di
-      on di."Drinkid" = d.id join
-      inredients i
+      on di."DrinkId" = d.id join
+      ingredients i
       on di."IngredientId" = i.id
-      where i.name = any (array([${ingredientString}])
+      where i.name = any(array[${ingredientString}])
       group by d.name, d.id
       having count(*) =d."numOfIngredients"`   
     )
@@ -127,7 +127,7 @@ export const searchCocktailsByIngredients = async (req : RequestWithUser, res : 
   try{
     const {ingredients} = req.body
     const ingredientString = ingredientArrayToString(ingredients)
-
+    console.log(ingredientString)
     const drinks = await suitableCocktails(ingredientString);
     if(drinks===undefined) res.status(500).send({error : true, res:'Error in Query'})
     res.status(200).send({error: false, res :drinks})

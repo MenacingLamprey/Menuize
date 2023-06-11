@@ -1,26 +1,20 @@
 import { useContext } from 'react';
 import { useFieldArray, useForm, FormProvider} from 'react-hook-form'
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, Container, TextField, Typography } from '@mui/material';
 
-import { IDrink } from "../../apiTypes"
 import { FormValues } from './formTypes';
 
 import { formatIngredients } from '../../utils/drinkFormating';
 import { createDrink } from "../../apiServices/drinkServices"
 import { IngredientContext } from '../../Contexts/IngredientContext';
+import { DrinkContext } from '../../Contexts/DrinkContext';
 import { DrinkIngredientForm } from "./DrinkIngredientForm";
 
 import './styles.css'
 
-
-interface IProps {
-  userDrinks : IDrink[]
-  setUserDrinks : React.Dispatch<React.SetStateAction<IDrink[]>>
-}
-
-export const DrinkForm = (props : IProps) => {
+export const DrinkForm = () => {
   const [potentialIngredients, setPotentialIngredients] = useContext(IngredientContext)
-  const { userDrinks, setUserDrinks } = props
+  const [userDrinks, setUserDrinks ] = useContext(DrinkContext)
 
   const methods  = useForm<FormValues>({
     defaultValues: {
@@ -34,12 +28,11 @@ export const DrinkForm = (props : IProps) => {
 
   const { register, control, reset, handleSubmit} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
-  const ingredientFormProps = {fields, append, remove, potentialIngredients}
+  const ingredientFormProps = {fields, append, remove, potentialIngredients,register}
 
   const submit = async (data : FormValues) => {
     const {drinkName, glass, ingredients, method } = data
     const {drinkIngredients, measures, newIngredients} = formatIngredients(ingredients, potentialIngredients)
-    console.log('allingredients',drinkIngredients,'newIngredientdS', newIngredients)
     const numOfIngredients = ingredients.length
     const accessToken = localStorage.getItem('accessToken') || ''
     const drink = {name:drinkName, glass, numOfIngredients, method, measures, Ingredients:drinkIngredients, newIngredients}
@@ -51,7 +44,9 @@ export const DrinkForm = (props : IProps) => {
     reset()
   }
 
-  return(<FormProvider {...methods}>
+  return(<Container sx={{maxWidth:450, margin :5}}>
+    <Typography component={'h1'} variant='h5'>Register Your New Drink</Typography>
+    <FormProvider {...methods}>
     <Box component="form" onSubmit={handleSubmit(data => submit(data))} noValidate sx={{ mt: 1 }}>
     <TextField
       margin="normal"
@@ -83,7 +78,7 @@ export const DrinkForm = (props : IProps) => {
         required: true
       })}
     />
-    <DrinkIngredientForm ingredientFormProps={ingredientFormProps} />
+    <DrinkIngredientForm ingredientFormProps={ingredientFormProps} initialIngredients={[]}/>
     <Button
       type="submit"
       fullWidth
@@ -93,5 +88,5 @@ export const DrinkForm = (props : IProps) => {
       Create Drink
     </Button>
   </Box>
-  </FormProvider>)
+  </FormProvider></Container>)
 }

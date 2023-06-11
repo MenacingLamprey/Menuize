@@ -1,22 +1,26 @@
 import { useContext, useState, useEffect } from "react"
-import { Container, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Container, Typography } from "@mui/material";
 
 import { IDrink } from "../../apiTypes";
 import { UserContext } from "../../Contexts/UserContext";
-import { DrinkForm } from "../DrinkForm";
 import { fetchAllUserDrinks, fetchAllUserIngredients } from "../../apiServices";
 import { IngredientContext } from "../../Contexts/IngredientContext";
 
 import './styles.css'
 import { DrinkCarousel } from "./DrinkCarousel";
 import { DrinkSearchBar } from "./DrinkSearchBar";
+import { DrinkFinder } from "./DrinkFinder";
+import { SalesAnalyzer } from "../SalesAnalyzer";
+import { DrinkContext } from "../../Contexts/DrinkContext";
 
 const initialDrink : IDrink = {name : "", description :"", numOfIngredients :0, glass :"" , Ingredients : []}
 
 export const DrinkPage = () => {
   const [currentUser] = useContext(UserContext);
-  const [_, setIngredients] = useContext(IngredientContext)
-  const [drinks,setDrinks] = useState([initialDrink])
+  const [ingredients, setIngredients] = useContext(IngredientContext)
+  const [drinks,setDrinks] = useContext(DrinkContext)
+  const navigate = useNavigate();
   const username = currentUser?.username || localStorage.getItem("username") || ""
 
   useEffect(()=>{
@@ -35,17 +39,34 @@ export const DrinkPage = () => {
   }
 
   return (<Container id={"drink-page"} component="main" maxWidth="xs">
-    <Typography component="h1" variant="h5">
-      Here's a few of your recently created Drinks      
+    <Box>
+      <Typography component="h1" variant="h5" maxWidth="xs">
+        Here's a few of your recently created Drinks      
+      </Typography>
+      <DrinkCarousel drinks={drinks.slice(9)} />
+    </Box>
+    <Box>
+      <Typography component="h1" variant ="h5" maxWidth="xs">
+        Search for a Drink by Name
+      </Typography>
+      <DrinkSearchBar drinks={drinks} />
+    </Box>
+    <Box>
+    <Typography component="h1" variant ="h5" maxWidth="xs">
+      Search for a Drink by Ingredients
     </Typography>
-    <DrinkCarousel drinks={drinks} />
-    <Typography component="h1" variant ="h5">
-      Search for a Drink by Name
-    </Typography>
-    <DrinkSearchBar drinks={drinks} />
-    <Typography component="h1" variant="h5">
-      Would you like to add a new drink to your register?
-    </Typography>
-    <DrinkForm userDrinks={drinks} setUserDrinks={setDrinks}/>
+    <DrinkFinder potentialIngredients={ingredients}/>
+    </Box>
+    <Box>
+      <Button 
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+        onClick={ e => navigate("/drink-form")}
+        > 
+          Create New Drink?
+      </Button>
+    </Box>
+    {/* <SalesAnalyzer drinks={drinks} ingredients={ingredients}/> */}
   </Container>)
 }

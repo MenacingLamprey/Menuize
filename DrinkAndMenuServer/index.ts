@@ -10,7 +10,7 @@ dotenv.config({path : path.resolve(__dirname, '../.env')});
 
 const PORT = process.env.PORT || 3001
 const HOST = process.env.HOST || 'localhost'
-
+console.log(PORT, HOST)
 const CLIENT_PORT = process.env.CLIENT_PORT || 3000
 const CLIENT_HOST = process.env.CLIENT_HOST || 'localhost'
 

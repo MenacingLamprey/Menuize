@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 
-import Card from '@mui/material/Card';
-import CardHeader from '@mui/material/CardHeader';
-import Avatar from '@mui/material/Avatar';
+import { Card, CardActionArea,CardHeader,Avatar } from '@mui/material';
 import { red } from '@mui/material/colors';
 import { IDrink } from '../../../../apiTypes';
 import { Button } from '@mui/material';
@@ -14,7 +12,8 @@ interface IProps {
 export const DrinkCard = ({drink} : IProps) => {
   const nav = useNavigate()
   return (
-    <Card sx={{ maxWidth: 345,  height : 120}} variant='outlined'>
+    <Card sx={{ minWidth: 100, maxWidth:200,  height : 125, alignSelf:'center'}} variant='outlined'>
+      <CardActionArea sx={{ minWidth: 100,  height : 125}} onClick={e => nav(`/drinks/${drink.name}`)}>
       <CardHeader
         avatar={
           <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -23,7 +22,7 @@ export const DrinkCard = ({drink} : IProps) => {
         }
         title={drink.name}
       />
-      <Button onClick={e => nav(`/drinks/${drink.name}`)}>Go To</Button>
+      </CardActionArea>
     </Card>
   );
 }

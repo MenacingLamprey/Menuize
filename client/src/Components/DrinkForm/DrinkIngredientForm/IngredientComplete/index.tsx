@@ -8,14 +8,15 @@ import { FormValues } from "../../formTypes"
 interface IProps {
   potentialIngredients : IIngredient[]
   index : number
+  initialValue : string
 }
 
-export const IngredientComplete = ( {potentialIngredients,index} : IProps) => {
+export const IngredientComplete = ( {potentialIngredients,index, initialValue} : IProps) => {
   const {control, register, setValue} = useFormContext<FormValues>()
 
   useEffect(() => {
     register(`ingredients.${index}.ingredient`);
-  })
+  },[])
 
   return (
   <Controller

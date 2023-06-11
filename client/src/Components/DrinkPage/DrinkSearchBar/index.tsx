@@ -26,18 +26,17 @@ export const DrinkSearchBar = ({drinks} : IProps) => {
 
   return (<Container>
   <form id="search-form">
-    <TextField
+    <TextField sx={{width :175}}
       id="search-bar"
       className="text"
       onChange={(e) => {
         setSearchQuery(e.target.value.toLowerCase());
       }}
-      label="Enter your Drink Name"
+      label="Drink Name"
       variant="outlined"
       placeholder="Search..."
-      size="small"
     />
-    <IconButton type="submit" aria-label="search">
+    <IconButton>
       <SearchIcon style={{ fill: "blue" }} />
     </IconButton>
   </form>

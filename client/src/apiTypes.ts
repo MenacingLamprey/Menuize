@@ -25,6 +25,7 @@ export interface IDrink {
   numOfIngredients : number
   Ingredients : IIngredient[]
   userId ? : string
+  price? :number
 }
 
 

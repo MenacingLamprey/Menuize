@@ -10,7 +10,7 @@ interface IProps {
 export const DrinkList = ({drinks} : IProps) => {
     return (<div id = {'drink-list-container'}>
         <ul id = {'drink-list'}>
-            {drinks ? drinks.map(drink => <li key ={drink.id} className ={'drink'}> <DrinkLink drink={drink}/></li>) : <p>No Drinks</p>}
+            {drinks ? drinks.map(drink => <li key ={drink.id} className ={'drink'}> <DrinkLink drinkName={drink.name}/></li>) : <p>No Drinks</p>}
         </ul>
     </div>)
 }
