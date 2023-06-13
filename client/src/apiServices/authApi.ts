@@ -17,7 +17,6 @@ export const register = (user :IUser) => {
 };
 
 export const login = (user :IUser) => {
-  console.log(`${apiUrl}/login`)
   return fetch(`${apiUrl}/login`, {
     method: 'POST',
     credentials: 'include',

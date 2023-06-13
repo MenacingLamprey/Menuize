@@ -1,40 +1,29 @@
-import { useContext, useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Container, Typography } from "@mui/material";
 
-import { IDrink } from "../../apiTypes";
-import { UserContext } from "../../Contexts/UserContext";
-import { fetchAllUserDrinks, fetchAllUserIngredients } from "../../apiServices";
-import { IngredientContext } from "../../Contexts/IngredientContext";
-
-import './styles.css'
+import { IMemoryUser } from "../../apiTypes";
 import { DrinkCarousel } from "./DrinkCarousel";
 import { DrinkSearchBar } from "./DrinkSearchBar";
 import { DrinkFinder } from "./DrinkFinder";
-import { DrinkContext } from "../../Contexts/DrinkContext";
+import { useQueryClient } from 'react-query';
+
+import './styles.css'
 
 export const DrinkPage = () => {
-  const [currentUser] = useContext(UserContext);
-  const [ingredients, setIngredients] = useContext(IngredientContext)
-  const [drinks,setDrinks] = useContext(DrinkContext)
   const navigate = useNavigate();
-  const username = currentUser?.username || localStorage.getItem("username") || ""
+  const queryClient = useQueryClient();
+  const accessToken = localStorage.getItem('accessToken');
 
-  useEffect(()=>{
-    getUserIngredients(username)
-    getUserDrinks(username)
-  },[])
-
-  const getUserIngredients = async (user : string) => {
-    const userIngredients = await fetchAllUserIngredients(user);
-    setIngredients(userIngredients.res)
+  if(!accessToken){
+    return new Error("No access token found")
   }
-
-  const getUserDrinks = async (user : string) => {
-    const userDrinks = await fetchAllUserDrinks(user);
-    setDrinks(userDrinks.res)
+  const userData = queryClient.getQueryData<IMemoryUser>(["user",accessToken]);
+  if(!userData){
+    return new Error("User not found")
   }
-
+  
+  const {drinks, ingredients} = userData;
+  
   return (<Container id={"drink-page"} component="main" maxWidth="xs">
     <Box>
       <Typography component="h1" variant="h5" maxWidth="xs">

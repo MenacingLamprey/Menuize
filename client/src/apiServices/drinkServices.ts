@@ -18,7 +18,7 @@ export const fetchUserDrink =async (drinkName :string, accessToken : string) => 
 
 export const fetchAllUserDrinks = async (username : string) => {
   const res = await fetch(`${apiUrl}/all/${username}`)
-  return await res.json()
+  return res
 }
 
 type extendedDrink = IDrink & {newIngredients : IIngredient[]}

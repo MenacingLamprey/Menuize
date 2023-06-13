@@ -13,6 +13,8 @@ export interface IIngredient {
 
 export interface IMemoryUser {
   username : string
+  drinks : IDrink[]
+  ingredients : IIngredient[]
 }
 
 export interface IDrink {

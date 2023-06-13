@@ -9,10 +9,10 @@ interface DrinksAPIResponse {
 export const getAllUserDrinks : QueryFunction<DrinksAPIResponse, ["drinks", string]> = async ({
   queryKey,
 }) => {
-  const accessToken = localStorage.getItem("accessToken") || "";
-  const apiRes = await fetchAllUserDrinks(accessToken);
+  const username = queryKey[1];
+  const apiRes = await fetchAllUserDrinks(username);
   if (!apiRes.ok) {
-    throw new Error(`drink/${name} fetch not ok`);
+    throw new Error(`/drinks fetch not ok`);
   }
   return apiRes.json();
 };

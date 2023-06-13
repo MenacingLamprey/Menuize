@@ -4,7 +4,6 @@ import { useParams } from "react-router-dom"
 import { fetchIngredient,editIngredient } from '../../apiServices/ingredientServices'
 import { IIngredient } from "../../apiTypes"
 import { Button, Container, Typography } from "@mui/material"
-import { ConditonalField } from "../DrinkDetails/CondtionalField"
 
 const initialIngredient : IIngredient = {name :'', family : ''}
 
@@ -33,14 +32,7 @@ export const IngredientDetails = () => {
 
   return (<Container>
     <Typography component={'h1'} variant="h4">{ingredient.name}</Typography>  
-    <ConditonalField 
-      adder={setIsEditingFamily}
-      addingState={isEditingFamily}
-      initialInput={ingredient.family || ""}
-      inputSetter ={setFamily}
-      inputState ={family}
-      id={'family'}
-    ></ConditonalField>
+    <Typography component={'h2'} variant="h5">Family: {ingredient.family}</Typography>
     <Button onClick={updateIngredient} >Submit Changes</Button>
   </Container>)
 }
