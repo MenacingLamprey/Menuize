@@ -13,8 +13,7 @@ export const fetchUserDrink =async (drinkName :string, accessToken : string) => 
     body : JSON.stringify({drinkName})
   }
   const res = await fetch(`${apiUrl}/getDrink`, fetchOptions)
-  const data = await res.json()
-  return data
+  return res
 }
 
 export const fetchAllUserDrinks = async (username : string) => {
@@ -37,19 +36,25 @@ export const createDrink = async (drink : extendedDrink, accessToken : string) =
   return data.res
 }
 
+interface FieldDifferences {
+  name: string
+  method : string
+  glass : string
+  ingredientChanges : any
+}
 
-export const editDrink = async (fields : unknown, accessToken : string) => {
+export const editDrink = async (changes : FieldDifferences , accessToken : string) => {
   const fetchOptions = { 
     method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(fields)
+    body: JSON.stringify(changes)
   }
   const res = await fetch(`${apiUrl}/edit`, fetchOptions)
   const data = await res.json()
-  return data.res
+  return data
 }
 
 export const searchDrinksByIngredients = async (accessToken : string, ingredients : IIngredient[]) => {

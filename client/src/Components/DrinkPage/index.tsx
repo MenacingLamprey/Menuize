@@ -11,10 +11,7 @@ import './styles.css'
 import { DrinkCarousel } from "./DrinkCarousel";
 import { DrinkSearchBar } from "./DrinkSearchBar";
 import { DrinkFinder } from "./DrinkFinder";
-import { SalesAnalyzer } from "../SalesAnalyzer";
 import { DrinkContext } from "../../Contexts/DrinkContext";
-
-const initialDrink : IDrink = {name : "", description :"", numOfIngredients :0, glass :"" , Ingredients : []}
 
 export const DrinkPage = () => {
   const [currentUser] = useContext(UserContext);

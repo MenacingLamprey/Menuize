@@ -16,11 +16,10 @@ interface IChildrenProps {
 
 interface IProps {
   ingredientFormProps: IChildrenProps
-  initialIngredients : IFormIngredient[]
 }
 
-export const DrinkIngredientForm = ({ingredientFormProps, initialIngredients} : IProps) => {
-  const {potentialIngredients, fields, append, remove, } = ingredientFormProps
+export const DrinkIngredientForm = ({ingredientFormProps} : IProps) => {
+  const {potentialIngredients, fields, append, remove} = ingredientFormProps
   const { register } = useFormContext()
   return (<Box>
     <Typography component="p" >Ingredients</Typography>
@@ -44,23 +43,12 @@ export const DrinkIngredientForm = ({ingredientFormProps, initialIngredients} : 
           })}
         />
         </Box>
-          {initialIngredients.length ? initialIngredients.map(ingredient => (
-              <IngredientComplete
-              key={field.id+'I'}
-              index={index}
-              potentialIngredients={potentialIngredients}
-              initialValue={ingredient.ingredient}
-            />
-          )) : <Box>
-            <IngredientComplete
-              key={field.id+'I'}
-              index={index}
-              potentialIngredients={potentialIngredients}
-              initialValue=""
-            />
-            <Button onClick={() => remove(index)}>Remove</Button>
-          </Box>
-          }
+          <IngredientComplete
+            key={field.id+'I'}
+            index={index}
+            potentialIngredients={potentialIngredients}
+          />
+          <Button onClick={() => remove(index)}>Remove</Button>
       </Box>
       ))}
     <Button onClick ={() => append({amount :0, measurement: '', ingredient :''})}>Add Ingredient</Button>

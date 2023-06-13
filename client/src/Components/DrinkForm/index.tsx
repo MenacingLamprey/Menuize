@@ -78,7 +78,7 @@ export const DrinkForm = () => {
         required: true
       })}
     />
-    <DrinkIngredientForm ingredientFormProps={ingredientFormProps} initialIngredients={[]}/>
+    <DrinkIngredientForm ingredientFormProps={ingredientFormProps}/>
     <Button
       type="submit"
       fullWidth

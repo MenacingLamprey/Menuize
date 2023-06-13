@@ -4,15 +4,13 @@ import { Controller, useFormContext } from "react-hook-form"
 import { IIngredient } from "../../../../apiTypes"
 import { FormValues } from "../../formTypes"
 
-
 interface IProps {
   potentialIngredients : IIngredient[]
   index : number
-  initialValue : string
 }
 
-export const IngredientComplete = ( {potentialIngredients,index, initialValue} : IProps) => {
-  const {control, register, setValue} = useFormContext<FormValues>()
+export const IngredientComplete = ( {potentialIngredients,index} : IProps) => {
+  const {control, register, setValue, getValues} = useFormContext<FormValues>()
 
   useEffect(() => {
     register(`ingredients.${index}.ingredient`);
@@ -28,6 +26,7 @@ export const IngredientComplete = ( {potentialIngredients,index, initialValue} :
     }) => {
       return (
         <Autocomplete
+          defaultValue={getValues().ingredients[index].ingredient}
           options={potentialIngredients.flatMap(ingredient => ingredient.name) || []}
           getOptionLabel={(option) => option}
           freeSolo

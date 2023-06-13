@@ -10,7 +10,7 @@ interface IProps {
 }
 
 export const DrinkCarousel = ({drinks} : IProps) => {
-  const { width, height } = useWindowDimensions()
+  const { width } = useWindowDimensions()
   const sliderItems: number = drinks.length > 3 ? 3 : drinks.length;
   const items: Array<any> = [];
 
