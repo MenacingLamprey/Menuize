@@ -2,19 +2,19 @@ import { useLocation, useNavigate } from "react-router-dom"
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
 import { IDrink, IIngredient } from "../../apiTypes"
 import { useContext, useState } from "react";
-import { IngredientContext } from "../../Contexts/IngredientContext";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import { FormValues, IFormIngredient } from "../DrinkForm/formTypes";
 import { DrinkIngredientForm } from "../DrinkForm/DrinkIngredientForm";
-import { formatIngredients } from "../../utils/drinkFormating";
 import { editDrink } from "../../apiServices";
-import { IngredientList } from "../IngredientPage/IngredientList";
 import { difference } from "./findChanges";
+import { CurrentDrinkContext } from "../../Contexts/DrinkContext";
 
 export const DrinkEditForm = () => {
   const [thisDrink, setThisDrink] = useState<IDrink>(useLocation().state.drink)
-  const [potentialIngredients, setPotentialIngredients] = useContext(IngredientContext)
+  const [editedDrink, setEditedDrink] = useContext(CurrentDrinkContext)
+  const potentialIngredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
   const navigate = useNavigate()
+
   const formatIngredientsForForm = () => {
     return thisDrink.Ingredients?.map((ingredient)  => {
       return {
@@ -35,7 +35,7 @@ export const DrinkEditForm = () => {
     mode: "onBlur"
   });
 
-  const { register, control, reset, handleSubmit, getValues} = methods
+  const { register, control, handleSubmit, getValues} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
 
   const ingredientFormProps = {fields, append, remove, potentialIngredients}
@@ -62,7 +62,8 @@ export const DrinkEditForm = () => {
 
   const getDrinkChanges = (data : FormValues) => {
     let {drinkName, glass, ingredients, method } = data
-    const returnObject :any = {name : drinkName, drinkId : thisDrink.id}
+    const numOfIngredients = ingredients.length
+    const returnObject :any = {name : drinkName, drinkId : thisDrink.id , numOfIngredients}
     if(thisDrink.method != method) returnObject['method'] = method
     if(thisDrink.glass != glass) returnObject['glass'] = glass
     const {add, remove} = difference(formatIngredientsForForm(), ingredients, "ingredient")
@@ -85,7 +86,8 @@ export const DrinkEditForm = () => {
     })
 
     changes['ingredientChanges'] = {add : updatedAdd, remove:updatedRemoved}
-     await editDrink(changes, accessToken)
+    const updatedDrink : IDrink = (await editDrink(changes, accessToken)).res
+    setEditedDrink(updatedDrink)
     navigate(-1)
   }
 

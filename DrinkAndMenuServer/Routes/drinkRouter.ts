@@ -1,7 +1,7 @@
 import Router, {Request, Response} from 'express'
 
-import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients } from '../Controllers/drinkContoller'
-import { authMiddleware, RequestWithUser } from '../Middleware/auth'
+import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients, getDrink } from '../Controllers/drinkContoller'
+import { authMiddleware } from '../Middleware/auth'
 
 export const drinkRouter = Router()
 
@@ -22,3 +22,5 @@ drinkRouter.patch('/edit', (req,res) => {
 drinkRouter.post('/ingredient_search', (req,res) => {
   authMiddleware(req,res,searchCocktailsByIngredients)
 })
+
+drinkRouter.get('/drink/:drinkName', getDrink)

@@ -1,29 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Container, Typography } from "@mui/material";
 
-import { IMemoryUser } from "../../apiTypes";
+import { IDrink, IIngredient, IMemoryUser } from "../../apiTypes";
 import { DrinkCarousel } from "./DrinkCarousel";
 import { DrinkSearchBar } from "./DrinkSearchBar";
 import { DrinkFinder } from "./DrinkFinder";
-import { useQueryClient } from 'react-query';
 
 import './styles.css'
 
 export const DrinkPage = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const accessToken = localStorage.getItem('accessToken');
-
-  if(!accessToken){
-    return new Error("No access token found")
-  }
-  const userData = queryClient.getQueryData<IMemoryUser>(["user",accessToken]);
-  if(!userData){
-    return new Error("User not found")
-  }
   
-  const {drinks, ingredients} = userData;
-  
+  const drinks = JSON.parse(localStorage.getItem('drinks') || "") as IDrink[]
+  const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
   return (<Container id={"drink-page"} component="main" maxWidth="xs">
     <Box>
       <Typography component="h1" variant="h5" maxWidth="xs">

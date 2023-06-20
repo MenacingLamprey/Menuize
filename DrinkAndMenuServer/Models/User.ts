@@ -16,6 +16,8 @@ export class User extends Model<IUser, UserCreationAttributes> {
   public uid!: string;
   public username! :string
   public password! :string
+  public readonly drinks!: Drink[];
+  public readonly ingredients!: Ingredient[];
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;

@@ -2,7 +2,7 @@ import { FieldArrayWithId, useFormContext } from "react-hook-form";
 import { Box, Button, TextField, Typography } from "@mui/material";
 
 import { IIngredient } from "../../../apiTypes";
-import { FormValues, IFormIngredient } from "../formTypes";
+import { FormValues } from "../formTypes";
 
 import { IngredientComplete } from "./IngredientComplete";
 import './styles.css' 

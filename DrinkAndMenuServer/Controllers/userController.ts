@@ -37,9 +37,16 @@ export const createUser = async (req : Request, res :Response) => {
 export const profile = async (req : RequestWithUser, res : Response) => {
 try {
     if (req.user){
-        const { uid, username } = req.user;
-        const user = { username };
-        return res.status(200).send(user);
+        const { uid } = req.user;
+        const user = await User.findOne({ where :{ uid }, include : ['drinks', 'ingredients'] });
+        if (!user) {
+            return res.status(404).send({ error : true, res: 'Resource not found' }); 
+        }
+        const { username,drinks,ingredients } = user
+        const strippedDrinks = drinks.map(drink =>( {name : drink.name, id:drink.id} ))
+        const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id} ))
+        console.log(strippedIngredients)
+        return res.status(200).send({username, drinks : strippedDrinks ,ingredients : strippedIngredients});
     }
     res.status(404).send({ error : true, res: 'Resource not found' });
     } catch (error){

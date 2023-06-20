@@ -9,22 +9,16 @@ interface IProps {
   index : number
 }
 
-export const IngredientComplete = ( {potentialIngredients,index} : IProps) => {
+export const IngredientComplete = ( {index} : IProps) => {
   const {control, register, setValue, getValues} = useFormContext<FormValues>()
+  const potentialIngredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
+  console.log(getValues().ingredients[index].ingredient)
 
   useEffect(() => {
     register(`ingredients.${index}.ingredient`);
   },[])
 
   return (
-  <Controller
-    name={'ingredients'}
-    control={control}
-    render={({
-      field: { ref, ...field },
-      fieldState: { error, invalid }
-    }) => {
-      return (
         <Autocomplete
           defaultValue={getValues().ingredients[index].ingredient}
           options={potentialIngredients.flatMap(ingredient => ingredient.name) || []}
@@ -36,8 +30,5 @@ export const IngredientComplete = ( {potentialIngredients,index} : IProps) => {
           }}
           onChange={(_,data) => setValue(`ingredients.${index}.ingredient`, data as string)}
         />
-      )}
-    }
-   />
   )
 }

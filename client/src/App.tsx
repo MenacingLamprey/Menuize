@@ -16,7 +16,7 @@ import { DrinkPage } from './Components/DrinkPage';
 import { DrinkDetails } from './Components/DrinkDetails';
 import { IngredientDetails } from './Components/IngredientDetails';
 import { DrinkForm } from './Components/DrinkForm';
-import { DrinkContext } from './Contexts/DrinkContext';
+import { CurrentDrinkContext, DrinkContext } from './Contexts/DrinkContext';
 import { NavBar } from './Components/NavBar';
 import { DrinkEditForm } from './Components/DrinkEditForm';
 
@@ -35,7 +35,7 @@ function App() {
   const currentUser = useState(null as IMemoryUser | null)
   const currentIngredients = useState<IIngredient[]>([]);
   const currentDrinks = useState<IDrink[]>([]);
-
+  const currentDrink = useState<IDrink>({name :'', numOfIngredients :0, glass :'', method :'', Ingredients :[]});
   return (
     <div className="App">
       <div id='main'>
@@ -45,6 +45,7 @@ function App() {
       <IngredientContext.Provider value={currentIngredients}>
       <DrinkContext.Provider value={currentDrinks}>
       <QueryClientProvider client={queryClient}>
+      <CurrentDrinkContext.Provider value={currentDrink}>
         <Routes>
           <Route path="/" element={<LandingPage isAuthenticated = {isAuthenticated} setIsAuthenticated ={setIsAuthenticated} />}/>
           <Route path="/profile" element={<Profile />} />
@@ -55,6 +56,7 @@ function App() {
           <Route path ="/drinks/edit/:drinkName" element={<DrinkEditForm />} />
           <Route path ="/ingredients/:ingredientName" element={<IngredientDetails />} />
         </Routes>
+      </CurrentDrinkContext.Provider> 
       </QueryClientProvider>
       </DrinkContext.Provider>
       </IngredientContext.Provider>

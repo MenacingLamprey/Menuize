@@ -23,6 +23,10 @@ export const Profile = () => {
       if (!user) {
         throw new Error("user not found");
       }
+    const drinks = user.drinks.map(drink => drink)
+    const ingredients = user.ingredients.map(ingredient => ingredient)
+    localStorage.setItem('drinks', JSON.stringify(drinks))
+    localStorage.setItem('ingredients', JSON.stringify(ingredients));
 
     return (<div id ={"profile-container"}>
        <h1> Welcome {user.username}</h1>

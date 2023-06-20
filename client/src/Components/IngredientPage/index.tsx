@@ -1,26 +1,25 @@
-import { useContext, useEffect } from "react"
-
+import { IMemoryUser } from "../../apiTypes";
 import { IngredientForm } from "./IngredientForm";
 import { IngredientList } from "./IngredientList";
-import { fetchAllUserIngredients } from '../../apiServices'
-import { UserContext } from "../../Contexts/UserContext";
-import { IngredientContext } from "../../Contexts/IngredientContext";
 
 import './styles.css'
+import { useQueryClient } from "react-query";
 
 export const IngredientPage = () => {
-  const [currentUser] = useContext(UserContext);
-  const username = currentUser?.username || localStorage.getItem("username") || ""
-  const [ingredients, setIngredients] = useContext(IngredientContext)
+  const queryClient = useQueryClient();
+  const accessToken = localStorage.getItem('accessToken');
 
-  useEffect(()=>{
-    getUserIngredients(username)
-  },[])
-
-  const getUserIngredients = async (user : string) => {
-    const userIngredients = await fetchAllUserIngredients(user);
-    setIngredients(userIngredients.res)
+  if(!accessToken){
+    console.log(new Error("No access token found"));
+    return <div>No Access Token Provided</div>
   }
+  const userData = queryClient.getQueryData<IMemoryUser>(["user",accessToken]);
+  if(!userData){
+    console.log(new Error("User not found"))
+    return <div>User not found</div>
+  }
+
+  const {ingredients} = userData;
 
   return (<div id ={"ingredient-page"}>
     <h4>Here's a list of ingredients you've registered</h4>

@@ -3,9 +3,10 @@ import { RequestWithUser } from "../Middleware/auth";
 import { Drink } from "../Models/Drink";
 import { DrinkIngredient } from "../Models/DrinkIngredient";
 import { Ingredient } from "../Models/Ingredient";
-import { IDrinkIngredient, IIngredient } from "../Models/modelTypes";
+import { IIngredient } from "../Models/modelTypes";
 import { User } from "../Models/User";
 import { sequelize } from "../Models";
+import { drinkRouter } from "../Routes/drinkRouter";
 
 export const getUserDrink = async (req : RequestWithUser, res :Response) => {
   try{
@@ -31,7 +32,7 @@ export const getAllDrinks =async (req :Request, res :Response) => {
       .then(drinks => res.status(200).send({error : false, res : drinks}))
       .catch(e=> res.status(500).send({error : true, res : e}))
   } catch (e) {
-    res.status(500).send({error : true, res : "Error Getting All Ingredients"})
+    res.status(500).send({error : true, res : "Error Getting All Drinks"})
   }
 }
 
@@ -65,33 +66,45 @@ export const createDrink = async (req : RequestWithUser, res :Response) => {
   }
 }
 
-//utility to strip not edited value fields from response
-function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== null && value !== undefined;
-}
-
-export const editDrink =async (req : RequestWithUser, res : Response) => {
+export const editDrink = async (req : RequestWithUser, res : Response) => {
   try {
     const userId = req.user!.getDataValue('uid')
-    //convert array of updated drink fields into a drink object (with potentially missing fields)
-    const updatedDrinkFields : Drink  = req.body.filter(notEmpty).reduce((reducedDrink : Drink, field : any) => {
-      return {...reducedDrink, ...field}
-    },{})
+    const { name, method ,glass, ingredientChanges, numOfIngredients } = req.body
+    await Drink.update({method, glass, numOfIngredients}, {where : {name}, fields :['method','glass','numOfIngredients']})
+    const {remove, add} = ingredientChanges;
 
-    const { name, Ingredients, id : drinkId } = updatedDrinkFields
-    await Drink.update({...updatedDrinkFields}, {where : {name, userId} })
-    Ingredients && await DrinkIngredient.destroy({where : {DrinkId : drinkId}}) 
-    Ingredients?.forEach(async (ingredient : IIngredient, index : number) => {
-      let id: number | undefined = ingredient.id
-      const { amount, measurement } = ingredient.DrinkIngredient!
-      //if ingredient dosen't already exist, create the ingredient and extract the id
-      if(ingredient.id && ingredient.id <= 0){
-        const {name, family} = ingredient;
-        ({ id } = await Ingredient.create({name, family, userId}))
-      }
-      DrinkIngredient.create({amount, measurement, DrinkId : drinkId, IngredientId : id })
-    })
-    const updatedDrink = await Drink.findByPk(drinkId, {include : 'Ingredients'})
+    if(remove.length){
+     await DrinkIngredient.destroy({where:{id :remove}})
+    }
+
+    if (add.length){
+      const newIngredients = add.filter((ingredient : any) => {
+        console.log(ingredient)
+        return ingredient.IngredientId < 0
+      }).map((ingredient : any) => {
+        return {name : ingredient.ingredient, userId, family :''}
+      })
+
+      const updatedIngredients = await Ingredient.bulkCreate(newIngredients)
+      const createdIds = updatedIngredients.map((record) => ({id: record.id, name : record.name}));
+      add.forEach((ingredient:any)=> {
+        if(ingredient.IngredientId < 0) {
+          createdIds.forEach((id) => {
+            if(ingredient.ingredient == id.name) ingredient['IngredientId'] =  id.id
+          })
+        }
+      })
+    }
+
+    await DrinkIngredient.bulkCreate(add)
+    const result = await Drink.findOne({where : {name}, include : 'Ingredients' })
+    const updatedDrink = {
+      name : result?.name,
+      glass : result?.glass,
+      method : result?.method,
+      Ingredients : result?.Ingredients
+    }
+
     res.status(200).send({error : false, res : updatedDrink})
   } catch (e) {
     console.log(e)
@@ -135,4 +148,16 @@ export const searchCocktailsByIngredients = async (req : RequestWithUser, res : 
     res.status(500).send({error : true, res :"Error Searching Cocktails by Ingredients"})
     console.log(e)
   }
+}
+
+export const getDrink = async (req: Request, res : Response) => {
+  try {
+    const { drinkName } = req.params
+    const drink = await Drink.findOne({where :{name : drinkName}, include:"Ingredients"})
+    console.log(drink)
+    res.status(200).send(drink)
+  } catch (e) {
+    res.status(500).send({error : true, res:"Error Getting Drink"})
+  }
+
 }

@@ -49,9 +49,16 @@ export interface IDrinkIngredient {
   DrinkId? : number
   IngredientId? :number
 } 
+
 export interface IAuth {
     authenticated : boolean;
     login : Function;
     logout :Function;
     isAuthenticated : Function;
   }
+
+export interface IMenu {
+  title : string
+  drinks: IDrink[]
+  current : boolean
+}
