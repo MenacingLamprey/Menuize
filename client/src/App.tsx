@@ -23,6 +23,7 @@ import { IngredientEditForm } from './Components/IngredientEditForm';
 import { IngredientRecipeForm } from './Components/IngredientEditForm/IngredientRecipeForm';
 import { MenuPage } from './Components/MenuPage';
 import { MenuForm } from './Components/MenuPage/MenuForm';
+import { GuestPage } from './Components/GuestPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,6 +56,7 @@ function App() {
         <Routes>
           <Route path="/" element={<LandingPage isAuthenticated = {isAuthenticated} setIsAuthenticated ={setIsAuthenticated} />}/>
           <Route path="/profile" element={<Profile />} />
+          <Route path ="/guest" element ={<GuestPage/>} />
           <Route path ="/ingredients" element={<IngredientPage />} />
           <Route path ='/drink-form' element ={<DrinkForm />} />
           <Route path ='/menu-form' element ={<MenuForm />} />

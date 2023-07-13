@@ -7,6 +7,8 @@ import { CurrentDrinkContext } from '../../Contexts/DrinkContext'
 import { useContext } from 'react'
 import { IngredientLink } from '../IngredientLink'
 
+import './styles.css'
+
 export const DrinkDetails = () => {
   const { drinkName } = useParams()
   const [ editedDrink ] = useContext(CurrentDrinkContext)
@@ -26,13 +28,12 @@ export const DrinkDetails = () => {
         </div>
       );
     }
-
     drink = results?.data?.res
 
   } else {
     drink = editedDrink
   }
-  console.log(drink)
+
   if (!drink) {
     throw new Error("drink not found");
   }
@@ -53,19 +54,20 @@ export const DrinkDetails = () => {
   }
 
   return(
-    <Container component={'main'} maxWidth="xs" sx={{display:'flex', flexDirection:'column', alignItems: 'center'}}>
-      <Box  marginBottom="10px;" display={'flex'}>
+    <Container id ='drink-details' component={'main'} maxWidth="xs" sx={{display:'flex', flexDirection:'column', alignItems: 'center'}}>
+      <Box  id = 'drink-name' marginBottom="10px;" display={'flex'}>
         <Typography component={'h1'} variant={'h4'}>{drinkName}</Typography>
         <Button sx={{fontSize: '1em'}} onClick={editDrink}>✎</Button>
       </Box>
-      <Box display={'flex'} alignItems={'center'}> </Box>
+      <Box id ='drink-info' display={'flex'} alignItems={'center'}>
       <Typography>Glass: {drink.glass}</Typography>
       <Typography>Method: {drink.method}</Typography>
-      <h4>Recipe</h4>
-      <Box>
+      </Box>
+      <Typography variant='h6'>Recipe</Typography>
+      <Box id='drink-recipe'>
         {drink.Ingredients && formatIngredientsForForm(drink)!.map((ingredient,index) => {
           return (<Box display={'flex'} justifyContent={'center'}>
-            <Typography>
+            <Typography id='drink-ingredient'>
               {ingredient.amount} {ingredient.measurement} <IngredientLink ingredientName={ingredient.ingredient}/>
             </Typography>
           </Box>

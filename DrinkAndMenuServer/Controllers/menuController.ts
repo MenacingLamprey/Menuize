@@ -25,6 +25,9 @@ export const createMenu = async (req: RequestWithUser, res: Response) => {
     const {title, drinks, speaciltyIngredients, current} = req.body
     const drinkIds = drinks.map((drink : IDrink) => drink.id)
     const completeDrinks = await Drink.findAll({where: {id: drinkIds}});
+    if (current) {
+      await Menu.update({current: false}, {where: {userId: uid}})
+    }
     const menu = await Menu.create({title, speaciltyIngredients, userId : uid, current})
     await menu.addDrinks(completeDrinks)
     res.status(200).send({error: 'false' , res :menu})

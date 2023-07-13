@@ -16,6 +16,11 @@ export const fetchUserDrink =async (drinkName :string, accessToken : string) => 
   return res
 }
 
+export const fetchPublicDrink = async (name : string) => {
+  const res = await fetch(`${apiUrl}/public/${name}`)
+  return res
+}
+
 export const fetchAllUserDrinks = async (username : string) => {
   const res = await fetch(`${apiUrl}/all/${username}`)
   return res

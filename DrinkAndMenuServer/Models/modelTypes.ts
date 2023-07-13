@@ -10,6 +10,7 @@ export interface IIngredient {
   RecipeIngredient? : IRecipeIngredient
   childIngredients? : IIngredient[]
   brands? : IBrand[]
+  isPublic : boolean
 }
 
 export interface IDrink {
@@ -22,6 +23,7 @@ export interface IDrink {
   drinkIngredients? : IDrinkIngredient[]
   Ingredients? : IIngredient[]
   userId ? : string
+  isPublic : boolean
 }
 
 export interface IUser {

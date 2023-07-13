@@ -15,8 +15,6 @@ import { ThemeContext } from '../../Contexts/ThemeContext';
 import { Auth }from '../../utils/Auth';
 import { login  } from '../../apiServices/authApi';
 
-//import './styles.css'
-
 interface IProps {
   setIsAuthenticated : Function
 }
@@ -30,10 +28,12 @@ export const Login = ({ setIsAuthenticated} : IProps) => {
   const handleSubmit = async (e :FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    
     const user = {
       username: data.get('username')!.toString(),
       password: data.get('password')!.toString(),
     };
+
     const res = await login(user);
     if (res.error) {
       alert(`${res.message}`);

@@ -150,3 +150,14 @@ export const editIngredientRecipe = async (req : RequestWithUser, res : Response
     res.status(500).send({error : true, res : "Error Editing Ingredient Recipe"})
   }
 }
+
+export const getPublicIngredient = async (req : Request, res : Response) => {
+  try {
+    const { ingredientName } = req.params
+    const ingredient = await Ingredient.findOne({where : {name : ingredientName, isPublic : true}})
+    return res.status(200).send({error : false, res : ingredient})
+  } catch(e) {
+    console.log(e)
+    res.status(500).send({error : true, res : "Error Getting Public Ingredient"})
+  }
+}

@@ -8,7 +8,7 @@ export const fetchProfile: QueryFunction<IMemoryUser, ["user", string]> = async 
   const accessToken = queryKey[1];
   const apiRes = await profile(accessToken);
   if (!apiRes.ok) {
-    throw new Error(`drink/${name} fetch not ok`);
+    throw new Error(`profile catch fetch not ok`);
   }
   return apiRes.json();
 };

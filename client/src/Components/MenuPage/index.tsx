@@ -2,7 +2,8 @@ import { useNavigate } from "react-router-dom"
 import { useQuery } from "react-query"
 import { IMenu } from "../../apiTypes"
 import { fetchCurrentMenu } from "../../Queries/fetchMenu"
-import { Button, Container, Typography } from "@mui/material"
+import { Box, Button, Container, Typography } from "@mui/material"
+import { MenuDetails } from "../MenuDetails"
 
 export const MenuPage = () => {
   const navigate = useNavigate()
@@ -29,10 +30,11 @@ export const MenuPage = () => {
   }
 
   return (<Container>
-    <h1>{menu.title}</h1>
-    <div>{menu.drinks.map(drink => (
-      <li>{drink.name}</li>
-    ))}
-    </div>
+    <Box>
+    <Typography variant="h4">Current Menu</Typography>
+    <MenuDetails menu={menu} />
+    <Typography variant="h6"><Button>Menu Archive</Button></Typography>
+    <Typography variant="h6"><Button onClick={() => navigate('/menu-form')}>Create New Menu</Button></Typography>
+    </Box>
   </Container>)
 }

@@ -1,23 +1,30 @@
 #drink-details{
-  display :flex;
+  display: flex;
   flex-direction: column;
-  align-self: center;
-  background-color: gray;
-  width: 30%;
-  justify-content: space-around;
+  justify-content: center;
+  align-items: center;
+  margin-top: 25px;
+  width: 100%;  
+  border: 1px solid black;
+}
+
+#drink-name{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+#drink-info{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
 }
 
-#glass{
+#drink-recipe{
   display: flex;
+  flex-direction: column;
   justify-content: center;
-  height :25px;
-  align-items: center;
-}
-
-#method{
-  display: flex;
-  justify-content: center;
-  height :25px;
-  align-items: center;
+  align-items: start
 }

@@ -8,23 +8,25 @@ export const Profile = () => {
     const navigate = useNavigate();
     const accessToken = localStorage.getItem("accessToken") || "";
     if (!accessToken) {
-        throw new Error("no access token found");
+      throw new Error("no access token found");
     }
     
-      const results = useQuery(["user", accessToken], fetchProfile);
-      if (results.isLoading) {
-        return (
-          <div className="loading-pane">
-            <h2 className="loader">🌀</h2>
-          </div>
-        );
-      }
-      const user = results?.data
-      if (!user) {
-        throw new Error("user not found");
-      }
+    const results = useQuery(["user", accessToken], fetchProfile);
+    if (results.isLoading) {
+      return (
+        <div className="loading-pane">
+          <h2 className="loader">🌀</h2>
+        </div>
+      );
+    }
+    const user = results?.data
+    if (!user) {
+      throw new Error("user not found");
+    }
+    
     const drinks = user.drinks.map(drink => drink)
     const ingredients = user.ingredients.map(ingredient => ingredient)
+
     localStorage.setItem('drinks', JSON.stringify(drinks))
     localStorage.setItem('ingredients', JSON.stringify(ingredients));
 

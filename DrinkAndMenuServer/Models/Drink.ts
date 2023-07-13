@@ -4,6 +4,7 @@ import { sequelize } from ".";
 import { DrinkIngredient } from "./DrinkIngredient";
 import { Ingredient } from "./Ingredient";
 import { IDrink, IDrinkIngredient } from './modelTypes';
+import { Menu } from "./Menu";
 
 type DrinkCreationAttributes = Optional<IDrink, "id">;
 
@@ -13,6 +14,8 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
     public glass! : string
     public description! : string
     public method! : string
+    public numOfIngredients! : number
+    public isPublic! : boolean
 
     public addIngredients!: HasManyAddAssociationsMixin<Ingredient, string>
     public getIngredients!:  HasManyGetAssociationsMixin<Ingredient>
@@ -26,6 +29,8 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
 
     public static associations: {
       Ingredients : Association<Drink, Ingredient>
+      drinkIngredients : Association<Drink, DrinkIngredient>
+      menus : Association<Drink, Menu>
     };
     
     public userId ? : string
@@ -58,6 +63,10 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
       },
       numOfIngredients : {
         type :DataTypes.INTEGER
+      },
+      isPublic : {
+        type : DataTypes.BOOLEAN,
+        defaultValue : false
       }
     },
 

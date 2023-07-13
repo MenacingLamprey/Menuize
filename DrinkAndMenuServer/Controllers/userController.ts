@@ -4,12 +4,26 @@ import bcrypt from 'bcrypt';
 import * as uuid from 'uuid';
 
 import { User } from "../Models/User";
+import { Drink } from "../Models/Drink";
+import { Ingredient } from "../Models/Ingredient";
 
 interface RequestWithUser extends Request {
-    user?: User
+  user?: User
 }
 
 const SECRET_KEY = process.env.SECRET_KEY || 'A key, which is secret';
+
+export const guest = async (req : Request, res : Response) => {
+	try {
+		const drinks = await Drink.findAll({where : {isPublic : true}})
+		const ingredients = await Ingredient.findAll({where : {isPublic : true}})
+    console.log(drinks, ingredients)
+    const publicItems = {drinks, ingredients}
+		res.status(200).send({error : false, res : publicItems})
+	} catch (error) {
+		res.status(500).send({error : true, res : 'Error getting guest data'})
+	}
+}
 
 export const createUser = async (req : Request, res :Response) => {
     const {username, password} = req.body
@@ -35,24 +49,22 @@ export const createUser = async (req : Request, res :Response) => {
 }
 
 export const profile = async (req : RequestWithUser, res : Response) => {
-try {
+	try {
     if (req.user){
-        const { uid } = req.user;
-        const user = await User.findOne({ where :{ uid }, include : ['drinks', 'ingredients'] });
-        if (!user) {
-            return res.status(404).send({ error : true, res: 'Resource not found' }); 
-        }
-        console.log('\n here \n')
-        const { username,drinks,ingredients } = user
-        const strippedDrinks = drinks.map(drink =>( {name : drink.name, id:drink.id} ))
-        const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id, family : ingredient.family} ))
-        console.log(strippedIngredients)
-        return res.status(200).send({username, drinks : strippedDrinks ,ingredients : strippedIngredients});
+			const { uid } = req.user;
+			const user = await User.findOne({ where :{ uid }, include : ['drinks', 'ingredients'] });
+			if (!user) {
+				return res.status(404).send({ error : true, res: 'Resource not found' }); 
+			}
+			const { username,drinks,ingredients } = user
+			const strippedDrinks = drinks.map(drink =>( {name : drink.name, id:drink.id} ))
+			const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id, family : ingredient.family} ))
+			return res.status(200).send({username, drinks : strippedDrinks ,ingredients : strippedIngredients});
     }
     res.status(404).send({ error : true, res: 'Resource not found' });
-    } catch (error){
-    return res.status(500).send({error : true, res: 'Error getting profile'})
-    }
+	} catch (error){
+		return res.status(500).send({error : true, res: 'Error getting profile'})
+	}
 }
 
 export const login = async (req : Request, res : Response) => {

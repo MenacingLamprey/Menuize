@@ -1,6 +1,6 @@
 import Router, {Request, Response} from 'express'
 
-import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients, getDrink } from '../Controllers/drinkContoller'
+import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients, getDrink, getPublicDrink } from '../Controllers/drinkContoller'
 import { authMiddleware } from '../Middleware/auth'
 
 export const drinkRouter = Router()
@@ -24,3 +24,5 @@ drinkRouter.post('/ingredient_search', (req,res) => {
 })
 
 drinkRouter.get('/drink/:drinkName', getDrink)
+
+drinkRouter.get('/public/:drinkName', getPublicDrink)

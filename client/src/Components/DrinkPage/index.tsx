@@ -10,12 +10,11 @@ import './styles.css'
 
 export const DrinkPage = () => {
   const navigate = useNavigate();
-
   const drinks = JSON.parse(localStorage.getItem('drinks') || "") as IDrink[]
   const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
 
   const onSelect = (drink : string) => {
-    navigate(`/drink/${drink}`)
+    navigate(`/drinks/${drink}`)
   }
 
   return (<Container id={"drink-page"} component="main" maxWidth="xs">

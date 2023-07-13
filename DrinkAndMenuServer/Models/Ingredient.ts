@@ -62,6 +62,11 @@ Ingredient.init(
     yield : {
       type : DataTypes.TEXT,
       allowNull : true 
+    },
+    isPublic : {
+      type : DataTypes.BOOLEAN,
+      allowNull : false,
+      defaultValue : false
     }
   },
 

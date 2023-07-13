@@ -7,10 +7,19 @@ import { IIngredient } from "../Models/modelTypes";
 import { User } from "../Models/User";
 import { sequelize } from "../Models";
 
+export const getPublicDrinks = async (req : Request, res : Response) => {
+  try {
+    const drinks = await Drink.findAll({where : {isPublic : true}, include : 'Ingredients'})
+    res.status(200).send({error : false, res : drinks})
+  } catch (e) {
+    res.status(500).send({error : true, res : "Error Getting Public Drinks"})
+  }
+}
+
 export const getUserDrink = async (req : RequestWithUser, res :Response) => {
   try{
     const { drinkName } = req.body
-    const userId = req.user!.getDataValue('uid')
+    const userId = req.user?.getDataValue('uid')
     const drink = await Drink.findOne({
       where : {name : drinkName, userId},
       include : [{model : Ingredient , attributes :['name', 'id']}],
@@ -38,10 +47,10 @@ export const getAllDrinks =async (req :Request, res :Response) => {
 
 export const createDrink = async (req : RequestWithUser, res :Response) => {
   try {
-    const {name:drinkName, glass, numOfIngredients, measures, method, Ingredients} = req.body;
+    const {name:drinkName, glass, numOfIngredients, measures, method, Ingredients, isPublic} = req.body;
     const userId = req.user!.getDataValue('uid')
     const newDrink = await Drink.create(
-      {name : drinkName, glass, numOfIngredients, method, userId},
+      {name : drinkName, glass, numOfIngredients, method, userId, isPublic},
     ) 
 
     await Ingredients.map(async (ingredient : IIngredient, index:number) => {
@@ -88,7 +97,7 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
 
       const addedIngredients = await Ingredient.bulkCreate(newIngredients)
       updatedIngredients = addedIngredients.map((ingredient : any) => {
-        return {id : ingredient.id, name : ingredient.name, family : ingredient.family}
+        return {id : ingredient.id, name : ingredient.name, family : ingredient.family, isPublic : ingredient.isPublic || false}
       })
       const createdIds = updatedIngredients.map((record) => ({id: record.id, name : record.name}));
       add.forEach((ingredient:any)=> {
@@ -200,11 +209,21 @@ export const searchCocktailsByIngredients = async (req : RequestWithUser, res : 
 export const getDrink = async (req: Request, res : Response) => {
   try {
     const { drinkName } = req.params
+    console.log(drinkName)
     const drink = await Drink.findOne({where :{name : drinkName}, include:"Ingredients"})
     console.log(drink)
     res.status(200).send(drink)
   } catch (e) {
     res.status(500).send({error : true, res:"Error Getting Drink"})
   }
+}
 
+export const getPublicDrink = async (req: Request, res : Response) => {
+  try {
+    const { drinkName } = req.params
+    const drink = await Drink.findOne({where :{name : drinkName, isPublic : true}, include:"Ingredients"})
+    res.status(200).send({error : false, res : drink})
+  } catch (e) {
+    res.status(500).send({error : true, res:"Error Getting Drink"})
+  }
 }

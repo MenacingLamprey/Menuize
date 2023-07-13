@@ -11,7 +11,8 @@ import {
     getIngredient,
     deleteIngredient,
     addRecipeToIngredient,
-    editIngredientRecipe
+    editIngredientRecipe,
+    getPublicIngredient
     } from '../Controllers/ingredientController'
 
 interface RequestWithUser extends Request {
@@ -47,3 +48,5 @@ ingredientRouter.patch('/addRecipe/:ingredientId', (req : Request, res : Respons
 ingredientRouter.patch('/editRecipe/:ingredientId', (req : Request, res : Response) => {
     authMiddleware(req as RequestWithUser, res, editIngredientRecipe)
 })
+
+ingredientRouter.get('/public/:ingredientName', getPublicIngredient)

@@ -99,3 +99,8 @@ export const editIngredientRecipe = async (
     const data = await res.json()
     return data.res
   }
+
+export const fetchPublicIngredient = async (name : string) => {
+  const res = await fetch(`${apiUrl}/public/${name}`)
+  return res
+}
