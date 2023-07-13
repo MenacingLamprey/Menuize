@@ -4,17 +4,16 @@ import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
 
-import { IDrink } from "../../../apiTypes";
-import './styles.css'
+import { IDrink, IIngredient } from "../../../apiTypes";
 import { Container, List } from "@mui/material";
 import { DrinkLink } from "../../DrinkLink";
+import { IngredientLink } from "../../IngredientLink";
 
 interface IProps {
-  drinks : IDrink[]
-  onSelect : (drink : string) => void
+  ingredients : IIngredient[]
 }
 
-export const DrinkSearchBar = ({drinks, onSelect} : IProps) => {
+export const IngredientSearchBar = ({ingredients} : IProps) => {
   const [SearchQuery , setSearchQuery] = useState("")
  
   const filterData = (query : string, data : string[]) => {
@@ -33,7 +32,7 @@ export const DrinkSearchBar = ({drinks, onSelect} : IProps) => {
       onChange={(e) => {
         setSearchQuery(e.target.value.toLowerCase());
       }}
-      label="Drink Name"
+      label="Ingredient Name"
       variant="outlined"
       placeholder="Search..."
     />
@@ -42,8 +41,8 @@ export const DrinkSearchBar = ({drinks, onSelect} : IProps) => {
     </IconButton>
   </form>
   {SearchQuery.length > 1 && <List>
-    {filterData(SearchQuery, drinks.map((drink) => drink.name)).map(item => (
-      <li id={'drink-search-item'}><DrinkLink drinkName={item} onSelect={onSelect}/></li>)
+    {filterData(SearchQuery, ingredients.map((ingredient) => ingredient.name)).map(item => (
+      <li id={'drink-search-item'}><IngredientLink ingredientName={item}/></li>)
     )}
   </List>}
   </Container>

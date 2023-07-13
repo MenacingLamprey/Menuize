@@ -54,6 +54,7 @@ export const editDrink = async (changes : FieldDifferences , accessToken : strin
   }
   const res = await fetch(`${apiUrl}/edit`, fetchOptions)
   const data = await res.json()
+  console.log(data)
   return data
 }
 

@@ -6,8 +6,9 @@ import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import { FormValues, IFormIngredient } from "../DrinkForm/formTypes";
 import { DrinkIngredientForm } from "../DrinkForm/DrinkIngredientForm";
 import { editDrink } from "../../apiServices";
-import { difference } from "./findChanges";
+import { getDifferences } from "./findChanges"
 import { CurrentDrinkContext } from "../../Contexts/DrinkContext";
+import { IngredientContext } from "../../Contexts/IngredientContext";
 
 export const DrinkEditForm = () => {
   const [thisDrink, setThisDrink] = useState<IDrink>(useLocation().state.drink)
@@ -66,18 +67,22 @@ export const DrinkEditForm = () => {
     const returnObject :any = {name : drinkName, drinkId : thisDrink.id , numOfIngredients}
     if(thisDrink.method != method) returnObject['method'] = method
     if(thisDrink.glass != glass) returnObject['glass'] = glass
-    const {add, remove} = difference(formatIngredientsForForm(), ingredients, "ingredient")
+    const {add, remove, changed} = getDifferences(formatIngredientsForForm(), ingredients, "ingredient")
     returnObject['add'] = add
     returnObject['remove']=remove
+    returnObject['changed']=changed
     return returnObject
   }
 
   const submit = async (data : FormValues) => {
     const accessToken = localStorage.getItem('accessToken') || ''
-    const changes = {name : data.drinkName, ...getDrinkChanges(data)}
-    const {add, remove} = changes
-
+    const differences = {name : data.drinkName, ...getDrinkChanges(data)}
+    const {add, remove, changed} = differences
+    console.log(add, remove, changed)
     const updatedAdd = add?.map((ingredient : IFormIngredient) => {
+      return appendIngredientId(ingredient)
+    })
+    const updatedChanged = changed?.map((ingredient : IFormIngredient) => {
       return appendIngredientId(ingredient)
     })
 
@@ -85,8 +90,11 @@ export const DrinkEditForm = () => {
       return getDrinkIngredientIdsToRemove(ingredient)
     })
 
-    changes['ingredientChanges'] = {add : updatedAdd, remove:updatedRemoved}
-    const updatedDrink : IDrink = (await editDrink(changes, accessToken)).res
+    differences['ingredientChanges'] = {add : updatedAdd, remove:updatedRemoved, changed : updatedChanged}
+    const results = (await editDrink(differences, accessToken)).res
+    const {updatedDrink, updatedIngredients} = results
+    const allIngredients = [...updatedIngredients, ...potentialIngredients]
+    localStorage.setItem('ingredients', JSON.stringify(allIngredients))
     setEditedDrink(updatedDrink)
     navigate(-1)
   }

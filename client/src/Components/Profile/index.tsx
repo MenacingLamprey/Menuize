@@ -28,11 +28,15 @@ export const Profile = () => {
     localStorage.setItem('drinks', JSON.stringify(drinks))
     localStorage.setItem('ingredients', JSON.stringify(ingredients));
 
-    return (<div id ={"profile-container"}>
-       <h1> Welcome {user.username}</h1>
-        <button id ={"ingredient-button"} className={"profile-button"} 
-            onClick={ e => navigate("/ingredients")}>Ingredient Page</button>
-        <button id ={"drink-button"} className={"profile-button"} 
-            onClick={ e => navigate("/drinks")}>Drink Page</button>
-    </div>)
+  return (<div id ={"profile-container"}>
+    <h1> Welcome {user.username}</h1>
+    <button id ={"ingredient-button"} className={"profile-button"} 
+      onClick={ e => navigate("/ingredients")}>Ingredient Page</button>
+    <button id ={"drink-button"} className={"profile-button"} 
+      onClick={ e => navigate("/drinks")}>Drink Page
+    </button>
+    <button id ={"drink-button"} className={"profile-button"} 
+      onClick={ e => navigate("/menus")}>Menu Page
+    </button>
+  </div>)
 }

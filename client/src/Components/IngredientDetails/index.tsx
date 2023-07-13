@@ -1,38 +1,75 @@
-import { useState, useEffect } from "react"
-import { useParams } from "react-router-dom"
+import { useContext } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 
-import { fetchIngredient,editIngredient } from '../../apiServices/ingredientServices'
 import { IIngredient } from "../../apiTypes"
-import { Button, Container, Typography } from "@mui/material"
-
-const initialIngredient : IIngredient = {name :'', family : ''}
+import { deleteIngredient } from "../../apiServices/ingredientServices"
+import { Box, Button, Container, Typography } from "@mui/material"
+import { useQuery } from "react-query"
+import { fetchIngredient } from "../../Queries/fetchIngredient"
+import { CurrentIngredientContext } from "../../Contexts/IngredientContext"
 
 export const IngredientDetails = () => {
+  const nav = useNavigate()
   const { ingredientName } = useParams()
-  const [ingredient, setIngredient] = useState(initialIngredient)
-  const [isEditingFamily, setIsEditingFamily] = useState(false)
-  const [family, setFamily] = useState(ingredient.family || '')
-  const accessToken = localStorage.getItem('accessToken') || ''
+  const [editedIngredient] = useContext(CurrentIngredientContext)
 
-  useEffect(() => {
-    getIngredient()
-  },[])
-
-  const getIngredient = async () => {
-    if(ingredientName) {
-      const fetchedIngredient = await fetchIngredient(ingredientName, accessToken) 
-      setIngredient(fetchedIngredient)
+  let ingredient : IIngredient | undefined
+  if(editedIngredient.name != ingredientName) {
+    if (!ingredientName) {
+      throw new Error("no name provided to Drink");
     }
+
+    const results = useQuery(["ingredient", ingredientName], fetchIngredient);
+    if (results.isLoading) {
+      return (
+        <div className="loading-pane">
+          <h2 className="loader">🌀</h2>
+        </div>
+      );
+    }
+
+    ingredient = results?.data?.res
+  } else {
+    ingredient = editedIngredient
   }
 
-  const updateIngredient = async () => {
-    console.log(family)
-    await editIngredient(ingredientName || '', family, accessToken)   
+  if (!ingredient) {
+    throw new Error("ingredient not found");
   }
+
+  const editIngredient = () => {
+    const ingredientRoute = `/ingredients/edit/${ingredientName}`
+    nav(ingredientRoute, {state:{ingredient}})
+  }
+
+  const removeIngredient = async () => {
+    await deleteIngredient(ingredientName, localStorage.getItem('accessToken') as string || "")
+    const allIngredients = JSON.parse(localStorage.getItem('ingredients') || "[]") as IIngredient[]
+    const newIngredients = allIngredients.filter((ing) => ing.name != ingredientName)
+    localStorage.setItem('ingredients', JSON.stringify(newIngredients))
+    nav('/ingredients')
+  }
+
+
 
   return (<Container>
-    <Typography component={'h1'} variant="h4">{ingredient.name}</Typography>  
+    <Box sx={{display : 'flex', justifyContent:'center'}}>
+      <Typography component={'h1'} variant="h4">{ingredient.name}</Typography>
+      <Button sx={{fontSize: '1em'}} onClick={editIngredient}>✎</Button>
+    </Box>
     <Typography component={'h2'} variant="h5">Family: {ingredient.family}</Typography>
-    <Button onClick={updateIngredient} >Submit Changes</Button>
+    {ingredient.childrenIngredients?.length ? ( <Box>
+      <Box>
+        <h4>Recipe</h4> 
+        {ingredient.childrenIngredients.map(child => (
+          <Typography key={child.id}>{child.amount} {child.measurement} {child.ingredient}</Typography>)
+        )}
+      </Box>
+      <Typography >Recipe Yield: {ingredient.yield}</Typography>
+      <Typography >Instructions: {ingredient.instructions}</Typography>
+      </Box>)
+      : (<Typography/>)
+      }
+    <Button onClick={removeIngredient}>Delete?</Button>
   </Container>)
 }

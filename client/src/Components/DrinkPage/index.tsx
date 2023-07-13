@@ -10,9 +10,14 @@ import './styles.css'
 
 export const DrinkPage = () => {
   const navigate = useNavigate();
-  
+
   const drinks = JSON.parse(localStorage.getItem('drinks') || "") as IDrink[]
   const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
+
+  const onSelect = (drink : string) => {
+    navigate(`/drink/${drink}`)
+  }
+
   return (<Container id={"drink-page"} component="main" maxWidth="xs">
     <Box>
       <Typography component="h1" variant="h5" maxWidth="xs">
@@ -24,7 +29,7 @@ export const DrinkPage = () => {
       <Typography component="h1" variant ="h5" maxWidth="xs">
         Search for a Drink by Name
       </Typography>
-      <DrinkSearchBar drinks={drinks} />
+      <DrinkSearchBar drinks={drinks} onSelect={onSelect}/>
     </Box>
     <Box>
     <Typography component="h1" variant ="h5" maxWidth="xs">

@@ -1,30 +1,32 @@
-import { IMemoryUser } from "../../apiTypes";
+import { useNavigate } from "react-router-dom";
+import { Box, Button, Typography } from "@mui/material";
+import { IIngredient, IMemoryUser } from "../../apiTypes";
 import { IngredientForm } from "./IngredientForm";
 import { IngredientList } from "./IngredientList";
 
-import './styles.css'
-import { useQueryClient } from "react-query";
+import { IngredientSearchBar } from "./IngredientSearchBar";
 
 export const IngredientPage = () => {
-  const queryClient = useQueryClient();
   const accessToken = localStorage.getItem('accessToken');
-
-  if(!accessToken){
-    console.log(new Error("No access token found"));
-    return <div>No Access Token Provided</div>
-  }
-  const userData = queryClient.getQueryData<IMemoryUser>(["user",accessToken]);
-  if(!userData){
-    console.log(new Error("User not found"))
-    return <div>User not found</div>
-  }
-
-  const {ingredients} = userData;
+  const navigate = useNavigate();
+  const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
 
   return (<div id ={"ingredient-page"}>
-    <h4>Here's a list of ingredients you've registered</h4>
-    <IngredientList ingredients={ingredients} />
-    <h4>Would you like to add a new ingredient to your register?</h4>
-    <IngredientForm />
+    <Box>
+      <Typography component="h1" variant ="h5" maxWidth="xs">
+        Search for a Drink by Name
+      </Typography>
+      <IngredientSearchBar ingredients={ingredients} />
+    </Box>
+    <Box>
+      <Button 
+        fullWidth
+        variant="contained"
+        sx={{ mt: 3, mb: 2 }}
+        onClick={ e => navigate("/ingredient-form")}
+        > 
+          Create New Ingredient?
+      </Button>
+    </Box>
   </div>)
 }

@@ -42,9 +42,10 @@ try {
         if (!user) {
             return res.status(404).send({ error : true, res: 'Resource not found' }); 
         }
+        console.log('\n here \n')
         const { username,drinks,ingredients } = user
         const strippedDrinks = drinks.map(drink =>( {name : drink.name, id:drink.id} ))
-        const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id} ))
+        const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id, family : ingredient.family} ))
         console.log(strippedIngredients)
         return res.status(200).send({username, drinks : strippedDrinks ,ingredients : strippedIngredients});
     }

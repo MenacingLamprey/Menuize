@@ -15,10 +15,6 @@ export class DrinkIngredient extends Model<IDrinkIngredient, DrinkIngredientCrea
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  // public bulkCreate(recordsData: Model<IDrinkIngredient, DrinkIngredientCreationAttributes>[], options?: {}): Promise<Model<IDrinkIngredient, DrinkIngredientCreationAttributes>[]> {
-  //   return this.bulkCreate(recordsData, options);
-  // }
-
   public static associations: {
     DrinkId: Association<Drink, DrinkIngredient>;
     IngredientID: Association<Ingredient, DrinkIngredient>;

@@ -3,12 +3,15 @@ export interface IIngredient {
   name: string
   instructions? : string | null
   family : string
-  DrinkIngredient? :IDrinkIngredient
-  recipe? : IIngredient[]
+  crafted? : boolean
   Drinks ? : IDrink[]
   userId ? : string
   updatedAt? : string
   createdAt? :string
+  familyId? : number
+  childrenIngredients? : IRecipeIngredient[]
+  DrinkIngredient? : IDrinkIngredient
+  yield? : string
 }
 
 export interface IMemoryUser {
@@ -24,13 +27,12 @@ export interface IDrink {
   method? :string
   glass : string
   measures? : IDrinkIngredient[]
+  
   numOfIngredients : number
   Ingredients : IIngredient[]
   userId ? : string
   price? :number
 }
-
-
 
 export interface IUser {
   uid? : string
@@ -55,10 +57,26 @@ export interface IAuth {
     login : Function;
     logout :Function;
     isAuthenticated : Function;
-  }
+}
 
 export interface IMenu {
   title : string
   drinks: IDrink[]
+  specialtyIngredients : IIngredient[]
   current : boolean
+}
+
+export interface IIngredientFamily {
+  id? : number
+  name : string
+  parentFamilyId? : number
+}
+
+export interface IRecipeIngredient {
+  ingredient: string
+  id? : number
+  amount : number
+  measurement : string
+  IngredientId? : number
+  childIngredientId? : number
 }

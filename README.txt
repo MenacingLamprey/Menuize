@@ -1,4 +1,4 @@
 TODO
 
-Discovered problems with drink ingredient search (non makeable drinks being shown)
-problem with drink edit form, (ingredient complete errors upon sending?), (dosen't reliably redirect) 
+the changed ingredient list (changed) in <EditDrinkForm> needs to include DrinkId consistently, 
+occasionally dosent (may be fixed). need to cisplay updates in <DrinkDetails>

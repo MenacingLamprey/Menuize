@@ -2,38 +2,41 @@ import { Association,
     HasManyAddAssociationMixin,
     Model,
     Optional,
-    DataTypes,} from "sequelize";
+    DataTypes,
+  } from "sequelize";
 
 import { sequelize } from ".";
 import { Drink } from "./Drink";
 import { DrinkIngredient } from "./DrinkIngredient";
 import { IIngredient } from './modelTypes';
 import { User } from "./User";
+import { RecipeIngredient } from "./RecipeIngredient";
 
 type IngredientCreationAttributes = Optional<IIngredient, "id">;
 
 export class Ingredient extends Model<IIngredient, IngredientCreationAttributes> {
-    id! : number
-    name!: string
-    instructions! : string
-    family! : string
+  id! : number
+  name!: string
+  instructions! : string
+  family! : string
+  yield! : string
 
-    public addDrink!: HasManyAddAssociationMixin<Ingredient, string>;
-    public removeDrink!: HasManyAddAssociationMixin<Ingredient, string>;
-    public addIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
-    public removeIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
+  public addDrink!: HasManyAddAssociationMixin<Ingredient, string>;
+  public removeDrink!: HasManyAddAssociationMixin<Ingredient, string>;
+  public addIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
+  public removeIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
+
+  public readonly createdAt!: Date;
+  public readonly updatedAt!: Date;
+
+  userId ? : string
   
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
-
-    userId ? : string
-
-    public static associations: {
-      recipe: Association<Ingredient, Ingredient>;
-      drinks : Association<Drink, Ingredient>
-      creator : Association<User, Ingredient>;  
-      DrinkIngredient : Association<DrinkIngredient, Ingredient>
-    };
+  public static associations: {
+    drinks : Association<Drink, Ingredient>
+    creator : Association<User, Ingredient>;  
+    DrinkIngredient : Association<DrinkIngredient, Ingredient>
+    RecipeIngredient : Association<RecipeIngredient, Ingredient>
+  };
 }
   
 Ingredient.init(
@@ -56,6 +59,10 @@ Ingredient.init(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    yield : {
+      type : DataTypes.TEXT,
+      allowNull : true 
+    }
   },
 
   {
@@ -64,7 +71,15 @@ Ingredient.init(
   }
 );
 
-Ingredient.belongsToMany(Drink, { through: DrinkIngredient});
-Drink.belongsToMany(Ingredient, { through: DrinkIngredient });
+Ingredient.belongsToMany(Ingredient, {
+  through: RecipeIngredient,
+  as : "childIngredients",
+  foreignKey :'IngredientId'
+});
 
-Ingredient.belongsToMany(Ingredient, { as: "recipe", through: "ingredientRecipe" });
+Ingredient.hasMany(RecipeIngredient, {
+  foreignKey :'childIngredientId'
+});
+
+Ingredient.belongsToMany(Drink, { through: DrinkIngredient,});
+Drink.belongsToMany(Ingredient, { through: DrinkIngredient });

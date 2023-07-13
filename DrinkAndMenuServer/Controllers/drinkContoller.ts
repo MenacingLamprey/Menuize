@@ -6,7 +6,6 @@ import { Ingredient } from "../Models/Ingredient";
 import { IIngredient } from "../Models/modelTypes";
 import { User } from "../Models/User";
 import { sequelize } from "../Models";
-import { drinkRouter } from "../Routes/drinkRouter";
 
 export const getUserDrink = async (req : RequestWithUser, res :Response) => {
   try{
@@ -17,6 +16,7 @@ export const getUserDrink = async (req : RequestWithUser, res :Response) => {
       include : [{model : Ingredient , attributes :['name', 'id']}],
       attributes :['name', 'glass', 'description', 'method', 'id']
     });
+    console.log(drink)
     res.status(200).send({error : false , res : drink})
   } catch (e) {
     console.log(e);
@@ -71,8 +71,9 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
     const userId = req.user!.getDataValue('uid')
     const { name, method ,glass, ingredientChanges, numOfIngredients } = req.body
     await Drink.update({method, glass, numOfIngredients}, {where : {name}, fields :['method','glass','numOfIngredients']})
-    const {remove, add} = ingredientChanges;
-
+    const {remove, add, changed} = ingredientChanges;
+    console.log(changed)
+    let updatedIngredients : IIngredient[] = []
     if(remove.length){
      await DrinkIngredient.destroy({where:{id :remove}})
     }
@@ -85,7 +86,10 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
         return {name : ingredient.ingredient, userId, family :''}
       })
 
-      const updatedIngredients = await Ingredient.bulkCreate(newIngredients)
+      const addedIngredients = await Ingredient.bulkCreate(newIngredients)
+      updatedIngredients = addedIngredients.map((ingredient : any) => {
+        return {id : ingredient.id, name : ingredient.name, family : ingredient.family}
+      })
       const createdIds = updatedIngredients.map((record) => ({id: record.id, name : record.name}));
       add.forEach((ingredient:any)=> {
         if(ingredient.IngredientId < 0) {
@@ -95,8 +99,12 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
         }
       })
     }
-
     await DrinkIngredient.bulkCreate(add)
+
+    changed.forEach(async (ingredient : any) => {
+      await DrinkIngredient.update(ingredient, {where : {IngredientId : ingredient.IngredientId, DrinkId : ingredient.DrinkId}})
+    })
+
     const result = await Drink.findOne({where : {name}, include : 'Ingredients' })
     const updatedDrink = {
       name : result?.name,
@@ -104,8 +112,8 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
       method : result?.method,
       Ingredients : result?.Ingredients
     }
-
-    res.status(200).send({error : false, res : updatedDrink})
+    console.log(updatedIngredients, 'this is updated ingredients')
+    res.status(200).send({error : false, res : {updatedDrink, updatedIngredients}})
   } catch (e) {
     console.log(e)
     res.status(500).send({error : true, res : "Error Editing Drink"})
@@ -115,16 +123,54 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
 const suitableCocktails = async(ingredientString : string) : Promise<Drink[] | undefined> => {
   try {
     const [results] = await sequelize.query(
-      `select d.name, d.id from drinks d join
-      "drinkIngredients" di
-      on di."DrinkId" = d.id join
-      ingredients i
-      on di."IngredientId" = i.id
-      where i.name = any(array[${ingredientString}])
-      group by d.name, d.id
-      having count(*) =d."numOfIngredients"`   
+      `SELECT d.name, d.id FROM drinks d
+        JOIN "drinkIngredients" di ON di."DrinkId" = d.id
+        JOIN ingredients i ON di."IngredientId" = i.id
+        WHERE i.name = ANY (ARRAY[${ingredientString}])
+        GROUP BY d.name, d.id
+        HAVING COUNT(*) = d."numOfIngredients"`  
     )
     return results as Drink[]
+  } catch(e) {
+    console.log(e)
+  }
+}
+
+const substituteCocktails = async(ingredientString : string) : Promise<Drink[] | undefined> => {
+  try {
+    const [results] = await sequelize.query(`
+    SELECT * FROM (
+      SELECT d.name, d.id, d."numOfIngredients",
+      (d."numOfIngredients" - 
+        (SELECT COUNT(DISTINCT CASE
+          WHEN i.family IN (SELECT i.family 
+            FROM ingredients i
+            WHERE  
+            (${ingredientString}) THEN i.name
+          ELSE NULL
+          END
+        )
+      FROM "drinkIngredients" di2
+      JOIN ingredients i ON di2."IngredientId" = i.id
+      WHERE di2."DrinkId" = d.id)
+    ) AS substitution_count
+  FROM drinks d
+  JOIN "drinkIngredients" di ON di."DrinkId" = d.id
+  JOIN ingredients i ON di."IngredientId" = i.id
+  WHERE i.name = ANY(ARRAY[${ingredientString}])
+     OR (
+        i.family = ANY (
+          SELECT DISTINCT i2.family
+          FROM ingredients i2
+           WHERE i2.name = ANY(ARRAY[${ingredientString}])
+        )
+     )
+  GROUP BY d.name, d.id, d."numOfIngredients"
+) subquery
+WHERE substitution_count = 1;
+  `)
+  console.log(results)
+  return results as Drink[]
   } catch(e) {
     console.log(e)
   }
@@ -142,6 +188,7 @@ export const searchCocktailsByIngredients = async (req : RequestWithUser, res : 
     const ingredientString = ingredientArrayToString(ingredients)
     console.log(ingredientString)
     const drinks = await suitableCocktails(ingredientString);
+    //const substitutes = await substituteCocktails(ingredientString);
     if(drinks===undefined) res.status(500).send({error : true, res:'Error in Query'})
     res.status(200).send({error: false, res :drinks})
   } catch(e) {

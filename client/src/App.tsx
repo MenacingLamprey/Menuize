@@ -8,7 +8,7 @@ import { IngredientPage } from './Components/IngredientPage';
 
 import { Auth } from './utils/Auth';
 import { UserContext } from './Contexts/UserContext';
-import { IngredientContext } from './Contexts/IngredientContext';
+import { CurrentIngredientContext, IngredientContext } from './Contexts/IngredientContext';
 import { IDrink, IIngredient, IMemoryUser } from './apiTypes';
 
 import './App.css';
@@ -19,6 +19,10 @@ import { DrinkForm } from './Components/DrinkForm';
 import { CurrentDrinkContext, DrinkContext } from './Contexts/DrinkContext';
 import { NavBar } from './Components/NavBar';
 import { DrinkEditForm } from './Components/DrinkEditForm';
+import { IngredientEditForm } from './Components/IngredientEditForm';
+import { IngredientRecipeForm } from './Components/IngredientEditForm/IngredientRecipeForm';
+import { MenuPage } from './Components/MenuPage';
+import { MenuForm } from './Components/MenuPage/MenuForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,6 +40,7 @@ function App() {
   const currentIngredients = useState<IIngredient[]>([]);
   const currentDrinks = useState<IDrink[]>([]);
   const currentDrink = useState<IDrink>({name :'', numOfIngredients :0, glass :'', method :'', Ingredients :[]});
+  const currentIngredient = useState<IIngredient>({name :'', family :''});
   return (
     <div className="App">
       <div id='main'>
@@ -46,16 +51,22 @@ function App() {
       <DrinkContext.Provider value={currentDrinks}>
       <QueryClientProvider client={queryClient}>
       <CurrentDrinkContext.Provider value={currentDrink}>
+      <CurrentIngredientContext.Provider value={currentIngredient}>
         <Routes>
           <Route path="/" element={<LandingPage isAuthenticated = {isAuthenticated} setIsAuthenticated ={setIsAuthenticated} />}/>
           <Route path="/profile" element={<Profile />} />
           <Route path ="/ingredients" element={<IngredientPage />} />
           <Route path ='/drink-form' element ={<DrinkForm />} />
+          <Route path ='/menu-form' element ={<MenuForm />} />
           <Route path ="/drinks" element={<DrinkPage />} />
+          <Route path ="/menus" element={<MenuPage />} />
           <Route path ="/drinks/:drinkName" element={<DrinkDetails />} />
           <Route path ="/drinks/edit/:drinkName" element={<DrinkEditForm />} />
+          <Route path ="/ingredients/edit/:ingredientName" element={<IngredientEditForm />} />
           <Route path ="/ingredients/:ingredientName" element={<IngredientDetails />} />
+          <Route path ="/ingredients/add-recipe/" element={<IngredientRecipeForm />} />
         </Routes>
+      </CurrentIngredientContext.Provider>
       </CurrentDrinkContext.Provider> 
       </QueryClientProvider>
       </DrinkContext.Provider>

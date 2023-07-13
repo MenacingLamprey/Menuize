@@ -1,13 +1,14 @@
 export interface ObjectDifference<T> {
   remove: T[];
   add: T[];
+  changed: T[];
 }
 
-export const difference = <T>(objList1: T[], objList2: T[], identifierKey: keyof T): ObjectDifference<T> => {
-  
+export const getDifferences = <T>(objList1: T[], objList2: T[], identifierKey: keyof T): ObjectDifference<T> => {
   const diff: ObjectDifference<T> = {
     remove: [],
-    add: []
+    add: [],
+    changed: []
   };
 
   const map1 = new Map();
@@ -22,7 +23,7 @@ export const difference = <T>(objList1: T[], objList2: T[], identifierKey: keyof
       const obj1 = map1.get(identifier);
 
       let isDifferent = false;
-      const diffObj: any = {};
+      const diffObj: Partial<T> = {};
 
       for (const key in obj1 as T) {
         if (obj1.hasOwnProperty(key) && obj1[key] !== obj2[key]) {
@@ -33,7 +34,7 @@ export const difference = <T>(objList1: T[], objList2: T[], identifierKey: keyof
 
       if (isDifferent) {
         const diffObject: T = { ...obj1, ...diffObj };
-        diff.add.push(diffObject);
+        diff.changed.push(diffObject);
       }
     } else {
       diff.add.push(obj2);

@@ -31,7 +31,7 @@ export class Drink extends Model<IDrink, DrinkCreationAttributes> {
     public userId ? : string
     public Ingredients? : Ingredient[]
     public measures? : IDrinkIngredient[]
-    public drinkIngredients ? : IDrinkIngredient[]
+    public drinkIngredients? : IDrinkIngredient[]
   }
   
   Drink.init(

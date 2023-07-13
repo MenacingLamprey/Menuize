@@ -5,10 +5,11 @@ import { useQuery } from 'react-query'
 import fetchDrink from '../../Queries/fetchDrink'
 import { CurrentDrinkContext } from '../../Contexts/DrinkContext'
 import { useContext } from 'react'
+import { IngredientLink } from '../IngredientLink'
 
 export const DrinkDetails = () => {
   const { drinkName } = useParams()
-  const [editedDrink, setEditedDrink ] = useContext(CurrentDrinkContext)
+  const [ editedDrink ] = useContext(CurrentDrinkContext)
   const nav = useNavigate()
 
   let drink : IDrink | undefined
@@ -31,12 +32,11 @@ export const DrinkDetails = () => {
   } else {
     drink = editedDrink
   }
-
+  console.log(drink)
   if (!drink) {
     throw new Error("drink not found");
   }
 
-  console.log(drink)
   const formatIngredientsForForm = (drink : IDrink) => {
     return drink.Ingredients?.map((ingredient)  => {
       return {
@@ -65,7 +65,9 @@ export const DrinkDetails = () => {
       <Box>
         {drink.Ingredients && formatIngredientsForForm(drink)!.map((ingredient,index) => {
           return (<Box display={'flex'} justifyContent={'center'}>
-            <Typography>{ingredient.amount} {ingredient.measurement} {ingredient.ingredient}</Typography>
+            <Typography>
+              {ingredient.amount} {ingredient.measurement} <IngredientLink ingredientName={ingredient.ingredient}/>
+            </Typography>
           </Box>
           )
         })}

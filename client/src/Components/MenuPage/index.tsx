@@ -1,10 +1,11 @@
+import { useNavigate } from "react-router-dom"
 import { useQuery } from "react-query"
 import { IMenu } from "../../apiTypes"
 import { fetchCurrentMenu } from "../../Queries/fetchMenu"
-import { Container } from "@mui/material"
+import { Button, Container, Typography } from "@mui/material"
 
 export const MenuPage = () => {
-  
+  const navigate = useNavigate()
   const results = useQuery("menu", fetchCurrentMenu)
 
   if (results.isLoading) {
@@ -16,7 +17,15 @@ export const MenuPage = () => {
   }
   const menu = results?.data?.res
   if(!menu) {
-    throw new Error("Error Getting Current Menu")
+    return <Container>
+      <Typography variant="h4">No menu set current!</Typography>
+      <Typography variant="h6">
+        Would you like to set one of your previously made menus current? <Button>Menus</Button>
+      </Typography>
+      <Typography variant="h6">
+        Or Create a new one to set? <Button onClick={() => navigate('/menu-form')}>Create Menu</Button>
+      </Typography>
+    </Container>
   }
 
   return (<Container>
