@@ -1,4 +1,4 @@
-import { QueryFunction } from "react-query";
+import { QueryFunction } from "@tanstack/react-query";
 import { IDrink, IIngredient}from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001

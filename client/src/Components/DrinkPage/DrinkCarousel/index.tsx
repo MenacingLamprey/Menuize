@@ -13,7 +13,7 @@ export const DrinkCarousel = ({drinks} : IProps) => {
   const { width } = useWindowDimensions()
   const sliderItems: number = drinks.length > 3 ? 3 : drinks.length;
   const items: Array<any> = [];
-
+  console.log(drinks)
   for (let i = 0; i < drinks.length-2; i ++) {
     if (i % sliderItems === 0) {
       items.push(

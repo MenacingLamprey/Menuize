@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Autocomplete, TextField, Stack, IconButton, Typography} from "@mui/material"
 import { searchDrinksByIngredients } from '../../../apiServices/drinkServices'
 import { IDrink, IIngredient } from "../../../apiTypes"
-import { DrinkCarousel } from "../DrinkCarousel";
+
 import { DrinkList } from "../../DrinkList";
 
 interface IProps {

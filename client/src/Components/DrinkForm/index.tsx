@@ -1,20 +1,28 @@
-import { useContext } from 'react';
 import { useFieldArray, useForm, FormProvider} from 'react-hook-form'
+import { useNavigate } from 'react-router-dom';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 
 import { FormValues } from './formTypes';
 
 import { formatIngredients } from '../../utils/drinkFormating';
-import { createDrink } from "../../apiServices/drinkServices"
-import { IngredientContext } from '../../Contexts/IngredientContext';
-import { DrinkContext } from '../../Contexts/DrinkContext';
+import { ExtendedDrink, createDrink } from "../../apiServices/drinkServices"
 import { DrinkIngredientForm } from "./DrinkIngredientForm";
+
+import { fetchProfile } from '../../Queries/fetchProfile';
 
 import './styles.css'
 
 export const DrinkForm = () => {
-  const [potentialIngredients, setPotentialIngredients] = useContext(IngredientContext)
-  const [userDrinks, setUserDrinks ] = useContext(DrinkContext)
+  const queryClient = useQueryClient();
+  const navigate = useNavigate()
+  const accessToken = localStorage.getItem('accessToken') || ''
+
+  if (!accessToken) {
+    throw new Error("no access token found");
+  }
+
+  const { data: user, error, isLoading } = useQuery({queryKey : ["user", accessToken], queryFn : fetchProfile});
 
   const methods  = useForm<FormValues>({
     defaultValues: {
@@ -28,20 +36,55 @@ export const DrinkForm = () => {
 
   const { register, control, reset, handleSubmit} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
-  const ingredientFormProps = {fields, append, remove, potentialIngredients,register}
+
+  const mutation = useMutation({mutationFn : (extendedDrink  : ExtendedDrink,) => createDrink(extendedDrink, accessToken), 
+    onSuccess : () => {queryClient.invalidateQueries({queryKey :["user", accessToken]});}
+  })
+  
+  if (mutation.isPending) {
+    return <span>Submitting...</span>;
+  }
+
+  if (mutation.isError) {
+    return <span>Error</span>;
+  }
+
+  if (mutation.isSuccess) {
+    return (<div>
+      <span>Post submitted!</span>
+    </div>)
+  }
+
+  if (isLoading) {
+    return (
+      <div className="loading-pane">
+        <h2 className="loader">🌀</h2>
+      </div>
+    );
+  }
+
+  if (error) {
+    <div className="error-window">
+        <h2 className="error">{error.message}</h2>
+      </div>
+  }
+
+  if (!user) {
+    throw new Error("user not found");
+  }
+
+  const { ingredients } = user
+ 
+  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients,register}
 
   const submit = async (data : FormValues) => {
-    const {drinkName, glass, ingredients, method } = data
-    const {drinkIngredients, measures, newIngredients} = formatIngredients(ingredients, potentialIngredients)
+    const {drinkName, glass, ingredients : usedIngredients, method } = data
+    const {drinkIngredients, measures, newIngredients} = formatIngredients(usedIngredients,ingredients)
     const numOfIngredients = ingredients.length
-    const accessToken = localStorage.getItem('accessToken') || ''
     const drink = {name:drinkName, glass, numOfIngredients, method, measures, Ingredients:drinkIngredients, newIngredients}
-    const success = await createDrink(drink, accessToken)
-    const updatedDrinks = [...userDrinks, drink]
-    setUserDrinks(updatedDrinks)
-    const updatedIngredients = [...potentialIngredients, ...newIngredients]
-    setPotentialIngredients(updatedIngredients)
-    reset()
+    const success = await mutation.mutateAsync(drink)
+    console.log(success)
+    navigate(-1)
   }
 
   return(<Container sx={{maxWidth:450, margin :5}}>

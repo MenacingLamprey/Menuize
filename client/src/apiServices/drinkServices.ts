@@ -26,8 +26,8 @@ export const fetchAllUserDrinks = async (username : string) => {
   return res
 }
 
-type extendedDrink = IDrink & {newIngredients : IIngredient[]}
-export const createDrink = async (drink : extendedDrink, accessToken : string) => {
+export type ExtendedDrink = IDrink & {newIngredients : IIngredient[]}
+export const createDrink = async (drink : ExtendedDrink, accessToken : string) => {
   const fetchOptions = { 
     method: "POST",
     headers: {

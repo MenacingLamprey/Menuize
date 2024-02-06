@@ -1,8 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import './styles.css'
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { fetchProfile } from '../../Queries/fetchProfile';
+
+import './styles.css'
 
 export const Profile = () => {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ export const Profile = () => {
       throw new Error("no access token found");
     }
     
-    const results = useQuery(["user", accessToken], fetchProfile);
+    const results = useQuery({queryKey :["user", accessToken], queryFn : fetchProfile});
     if (results.isLoading) {
       return (
         <div className="loading-pane">
@@ -24,12 +25,6 @@ export const Profile = () => {
       throw new Error("user not found");
     }
     
-    const drinks = user.drinks.map(drink => drink)
-    const ingredients = user.ingredients.map(ingredient => ingredient)
-
-    localStorage.setItem('drinks', JSON.stringify(drinks))
-    localStorage.setItem('ingredients', JSON.stringify(ingredients));
-
   return (<div id ={"profile-container"}>
     <h1> Welcome {user.username}</h1>
     <button id ={"ingredient-button"} className={"profile-button"} 

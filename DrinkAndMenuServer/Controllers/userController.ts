@@ -37,9 +37,11 @@ export const createUser = async (req : Request, res :Response) => {
         if (password === '') return res.status(400).send({ error : true, res: 'Password has no length' });
         const hash = await bcrypt.hash(password, 10);
         const uid = uuid.v4();
-        const newUser = await User.create({
-            username, password : hash, uid
+
+        await User.create({
+          username, password : hash, uid
         });
+
         const accessToken = jwt.sign({  _id: uid }, SECRET_KEY);
         res.status(201).send({ accessToken });
     } catch (e) {
@@ -52,14 +54,32 @@ export const profile = async (req : RequestWithUser, res : Response) => {
 	try {
     if (req.user){
 			const { uid } = req.user;
-			const user = await User.findOne({ where :{ uid }, include : ['drinks', 'ingredients'] });
+			const user = await User.findOne({
+        where : { uid },
+        include : [
+          {model : Drink, as : 'drinks', attributes : ['name', 'id']}, 
+          {model : Ingredient, as : 'ingredients', attributes : ['name', 'id', 'family']}
+        ] });
+
 			if (!user) {
-				return res.status(404).send({ error : true, res: 'Resource not found' }); 
+				return res.status(404).send({ error : true, res: 'Profile not found' }); 
 			}
-			const { username,drinks,ingredients } = user
-			const strippedDrinks = drinks.map(drink =>( {name : drink.name, id:drink.id} ))
-			const strippedIngredients = ingredients.map(ingredient =>( {name : ingredient.name, id:ingredient.id, family : ingredient.family} ))
-			return res.status(200).send({username, drinks : strippedDrinks ,ingredients : strippedIngredients});
+
+      const publicIngredients = await Ingredient.findAll({where : {"isPublic" : true}, attributes :['name', 'id', 'family']})
+			
+      const { username,drinks,ingredients } = user
+      
+      //merges list of users ingredients with list of public ingredients, removing duplicates
+      const merge = (a : Ingredient[], b : Ingredient[], predicate = (a : Ingredient, b : Ingredient) => a.id === b.id) => {
+        const c = [...a]; // copy to avoid side effects
+        // add all items from B to copy C if they're not already present
+        b.forEach((bItem) => (c.some((cItem) => predicate(bItem, cItem)) ? null : c.push(bItem)))
+        return c;
+      }
+      
+      const allIngredients = merge(publicIngredients, ingredients)
+      console.log(allIngredients.length)
+      return res.status(200).send({username, drinks : drinks , ingredients : allIngredients});
     }
     res.status(404).send({ error : true, res: 'Resource not found' });
 	} catch (error){

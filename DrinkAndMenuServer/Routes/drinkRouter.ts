@@ -1,11 +1,13 @@
 import Router, {Request, Response} from 'express'
 
-import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients, getDrink, getPublicDrink } from '../Controllers/drinkContoller'
+import { getUserDrink, createDrink, getAllDrinks, editDrink, searchCocktailsByIngredients, getDrink, getPublicDrink, getPublicDrinks, createTestDrinks, getStrippedDrinks } from '../Controllers/drinkContoller'
 import { authMiddleware } from '../Middleware/auth'
 
 export const drinkRouter = Router()
 
 drinkRouter.get('/all/:username', getAllDrinks);
+
+drinkRouter.get('/public', getPublicDrinks)
 
 drinkRouter.post('/getDrink',(req : Request, res : Response) => {
   authMiddleware(req, res, getUserDrink)
@@ -25,4 +27,6 @@ drinkRouter.post('/ingredient_search', (req,res) => {
 
 drinkRouter.get('/drink/:drinkName', getDrink)
 
-drinkRouter.get('/public/:drinkName', getPublicDrink)
+drinkRouter.get('/public/getTests', getStrippedDrinks)
+
+drinkRouter.post('/public/createTest', createTestDrinks)

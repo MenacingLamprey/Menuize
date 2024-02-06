@@ -11,10 +11,9 @@ import { DrinkLink } from "../../DrinkLink";
 
 interface IProps {
   drinks : IDrink[]
-  onSelect : (drink : string) => void
 }
 
-export const DrinkSearchBar = ({drinks, onSelect} : IProps) => {
+export const DrinkSearchBar = ({drinks} : IProps) => {
   const [SearchQuery , setSearchQuery] = useState("")
  
   const filterData = (query : string, data : string[]) => {
@@ -43,7 +42,7 @@ export const DrinkSearchBar = ({drinks, onSelect} : IProps) => {
   </form>
   {SearchQuery.length > 1 && <List>
     {filterData(SearchQuery, drinks.map((drink) => drink.name)).map(item => (
-      <li id={'drink-search-item'}><DrinkLink drinkName={item} onSelect={onSelect}/></li>)
+      <li id={'drink-search-item'}><DrinkLink drinkName={item}/></li>)
     )}
   </List>}
   </Container>

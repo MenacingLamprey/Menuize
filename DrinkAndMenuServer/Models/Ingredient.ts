@@ -20,6 +20,7 @@ export class Ingredient extends Model<IIngredient, IngredientCreationAttributes>
   instructions! : string
   family! : string
   yield! : string
+  isOwner! : boolean
 
   public addDrink!: HasManyAddAssociationMixin<Ingredient, string>;
   public removeDrink!: HasManyAddAssociationMixin<Ingredient, string>;
@@ -67,6 +68,9 @@ Ingredient.init(
       type : DataTypes.BOOLEAN,
       allowNull : false,
       defaultValue : false
+    },
+    isOwner : {
+      type : DataTypes.BOOLEAN
     }
   },
 

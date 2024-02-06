@@ -1,4 +1,4 @@
-import {useQuery} from "react-query";
+import {useQuery} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { fetchPublicItems } from "../../Queries/fetchGuest";
 import { DrinkPage } from "../DrinkPage";
@@ -6,7 +6,7 @@ import { DrinkPage } from "../DrinkPage";
 export const GuestPage = () => {
   localStorage.setItem('accessToken', 'guest')
 
-    const results = useQuery(["public"], fetchPublicItems);
+    const results = useQuery({queryKey :["public"], queryFn :fetchPublicItems});
     if (results.isLoading) {
       return (
         <div className="loading-pane">

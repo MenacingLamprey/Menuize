@@ -1,4 +1,4 @@
-import { QueryFunction } from "react-query";
+import { QueryFunction } from "@tanstack/react-query";
 import { fetchPublicDrink, fetchUserDrink} from "../apiServices/drinkServices"
 import { IDrink } from '../apiTypes'
 

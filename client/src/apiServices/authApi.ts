@@ -1,4 +1,5 @@
-import { IUser } from "../apiTypes";
+import axios from "axios";
+import { IMemoryUser, IUser } from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 

@@ -6,6 +6,7 @@ import { Ingredient } from "../Models/Ingredient";
 import { IIngredient } from "../Models/modelTypes";
 import { User } from "../Models/User";
 import { sequelize } from "../Models";
+import { StrippedDrink } from "../Models/StrippedDrink";
 
 export const getPublicDrinks = async (req : Request, res : Response) => {
   try {
@@ -50,7 +51,7 @@ export const createDrink = async (req : RequestWithUser, res :Response) => {
     const {name:drinkName, glass, numOfIngredients, measures, method, Ingredients, isPublic} = req.body;
     const userId = req.user!.getDataValue('uid')
     const newDrink = await Drink.create(
-      {name : drinkName, glass, numOfIngredients, method, userId, isPublic},
+      {name : drinkName, glass, numOfIngredients, method, userId, isPublic : true},
     ) 
 
     await Ingredients.map(async (ingredient : IIngredient, index:number) => {
@@ -131,6 +132,7 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
 
 const suitableCocktails = async(ingredientString : string) : Promise<Drink[] | undefined> => {
   try {
+    console.log(ingredientString)
     const [results] = await sequelize.query(
       `SELECT d.name, d.id FROM drinks d
         JOIN "drinkIngredients" di ON di."DrinkId" = d.id
@@ -225,5 +227,28 @@ export const getPublicDrink = async (req: Request, res : Response) => {
     res.status(200).send({error : false, res : drink})
   } catch (e) {
     res.status(500).send({error : true, res:"Error Getting Drink"})
+  }
+}
+
+export const createTestDrinks = async (req : Request, res : Response) => {
+  try {
+    const { drinkName, ingredients } :{drinkName : string, ingredients : string[] } = req.body
+    const drink = await StrippedDrink.create({drinkName, ingredients})
+    res.status(200).send({error : false, res : drink})
+
+  } catch (e) {
+    res.status(500).send({error : true, res:"Error creating Drink"})
+    console.log(e)
+  }
+}
+
+export const getStrippedDrinks = async (req: Request, res : Response) => {
+  try {
+    const drinks = await StrippedDrink.findAll()
+    res.status(200).send({error : false, res : drinks})
+
+  } catch (e) {
+    res.status(500).send({error : true, res:"Error creating Drink"})
+    console.log(e)
   }
 }

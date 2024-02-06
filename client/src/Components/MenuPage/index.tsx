@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 import { IMenu } from "../../apiTypes"
 import { fetchCurrentMenu } from "../../Queries/fetchMenu"
 import { Box, Button, Container, Typography } from "@mui/material"
@@ -7,7 +7,7 @@ import { MenuDetails } from "../MenuDetails"
 
 export const MenuPage = () => {
   const navigate = useNavigate()
-  const results = useQuery("menu", fetchCurrentMenu)
+  const results = useQuery({queryKey :["menu"],  queryFn :fetchCurrentMenu})
 
   if (results.isLoading) {
     return (

@@ -11,6 +11,7 @@ export interface IIngredient {
   childIngredients? : IIngredient[]
   brands? : IBrand[]
   isPublic : boolean
+  isOwner? : boolean
 }
 
 export interface IDrink {

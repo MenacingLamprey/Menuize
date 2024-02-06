@@ -1,4 +1,4 @@
-import { QueryFunction } from "react-query";
+import { QueryFunction } from "@tanstack/react-query";
 import {fetchUserDrink} from "../apiServices/drinkServices"
 import { IMenu } from '../apiTypes'
 import { getCurrentMenu } from "../apiServices/menuServices";
@@ -7,7 +7,7 @@ interface MenuAPIResponse {
   res : IMenu 
 }
 
-export const fetchCurrentMenu: QueryFunction<MenuAPIResponse, "menu"> = async ({
+export const fetchCurrentMenu: QueryFunction<MenuAPIResponse, ["menu"]> = async ({
   queryKey,
 }) => {
   const accessToken = localStorage.getItem("accessToken") || "";

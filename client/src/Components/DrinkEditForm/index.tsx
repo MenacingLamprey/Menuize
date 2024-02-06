@@ -8,30 +8,32 @@ import { DrinkIngredientForm } from "../DrinkForm/DrinkIngredientForm";
 import { editDrink } from "../../apiServices";
 import { getDifferences } from "./findChanges"
 import { CurrentDrinkContext } from "../../Contexts/DrinkContext";
-import { IngredientContext } from "../../Contexts/IngredientContext";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProfile } from "../../Queries/fetchProfile";
+
+const formatIngredientsForForm = (ingredients : IIngredient[]) => {
+  return ingredients.map((ingredient)  => {
+    return {
+      amount : ingredient.DrinkIngredient!.amount,
+      measurement : ingredient.DrinkIngredient!.measurement, 
+      ingredient : ingredient.name
+    }
+  })
+}
 
 export const DrinkEditForm = () => {
+  const accessToken = localStorage.getItem('accessToken') || ''
   const [thisDrink, setThisDrink] = useState<IDrink>(useLocation().state.drink)
-  const [editedDrink, setEditedDrink] = useContext(CurrentDrinkContext)
-  const potentialIngredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
+  const [_, setEditedDrink] = useContext(CurrentDrinkContext)
   const navigate = useNavigate()
 
-  const formatIngredientsForForm = () => {
-    return thisDrink.Ingredients?.map((ingredient)  => {
-      return {
-        amount : ingredient.DrinkIngredient!.amount,
-        measurement : ingredient.DrinkIngredient!.measurement, 
-        ingredient : ingredient.name
-      }
-    })
-  }
-
+  const results = useQuery({queryKey :["user", accessToken], queryFn :fetchProfile});
   const methods  = useForm<FormValues>({
     defaultValues: {
       drinkName : thisDrink.name,
       glass : thisDrink.glass,
       method : thisDrink.method,
-      ingredients: formatIngredientsForForm()
+      ingredients: formatIngredientsForForm(thisDrink.Ingredients)
     },
     mode: "onBlur"
   });
@@ -39,6 +41,23 @@ export const DrinkEditForm = () => {
   const { register, control, handleSubmit, getValues} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
 
+  if (results.isLoading) {
+    return (
+      <div className="loading-pane">
+        <h2 className="loader">🌀</h2>
+      </div>
+    );
+  }
+
+  const user = results?.data
+
+  if (!user) {
+    throw new Error("user not found");
+  }
+
+  const { ingredients } = results.data
+
+  const potentialIngredients = ingredients
   const ingredientFormProps = {fields, append, remove, potentialIngredients}
 
   const appendIngredientId = (ingredient : IFormIngredient)  => {
@@ -67,7 +86,7 @@ export const DrinkEditForm = () => {
     const returnObject :any = {name : drinkName, drinkId : thisDrink.id , numOfIngredients}
     if(thisDrink.method != method) returnObject['method'] = method
     if(thisDrink.glass != glass) returnObject['glass'] = glass
-    const {add, remove, changed} = getDifferences(formatIngredientsForForm(), ingredients, "ingredient")
+    const {add, remove, changed} = getDifferences(formatIngredientsForForm(thisDrink.Ingredients), ingredients, "ingredient")
     returnObject['add'] = add
     returnObject['remove']=remove
     returnObject['changed']=changed

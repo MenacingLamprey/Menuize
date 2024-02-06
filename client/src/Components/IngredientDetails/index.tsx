@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom"
 import { IIngredient } from "../../apiTypes"
 import { deleteIngredient } from "../../apiServices/ingredientServices"
 import { Box, Button, Container, Typography } from "@mui/material"
-import { useQuery } from "react-query"
+import { useQuery } from "@tanstack/react-query"
 import { fetchIngredient } from "../../Queries/fetchIngredient"
 import { CurrentIngredientContext } from "../../Contexts/IngredientContext"
 
@@ -19,7 +19,7 @@ export const IngredientDetails = () => {
       throw new Error("no name provided to Drink");
     }
 
-    const results = useQuery(["ingredient", ingredientName], fetchIngredient);
+    const results = useQuery({queryKey :["ingredient", ingredientName], queryFn :fetchIngredient});
     if (results.isLoading) {
       return (
         <div className="loading-pane">

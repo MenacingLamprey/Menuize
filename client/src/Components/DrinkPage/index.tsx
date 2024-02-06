@@ -1,34 +1,51 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Container, Typography } from "@mui/material";
 
-import { IDrink, IIngredient, IMemoryUser } from "../../apiTypes";
 import { DrinkCarousel } from "./DrinkCarousel";
 import { DrinkSearchBar } from "./DrinkSearchBar";
 import { DrinkFinder } from "./DrinkFinder";
 
 import './styles.css'
+import { useQuery } from "@tanstack/react-query";
+import { fetchProfile } from "../../Queries/fetchProfile";
+
+
 
 export const DrinkPage = () => {
   const navigate = useNavigate();
-  const drinks = JSON.parse(localStorage.getItem('drinks') || "") as IDrink[]
-  const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
-
-  const onSelect = (drink : string) => {
-    navigate(`/drinks/${drink}`)
+  const accessToken = localStorage.getItem('accessToken') || ''
+  
+  if (!accessToken) {
+    throw new Error("no access token found");
   }
+
+  const results = useQuery({queryKey :["user", accessToken], queryFn:  fetchProfile});
+
+  if (results.isLoading) {
+    return (
+      <div className="loading-pane">
+        <h2 className="loader">🌀</h2>
+      </div>
+    );
+  }
+  const user = results?.data
+  if (!user) {
+    throw new Error("user not found");
+  }
+  const {drinks, ingredients} = results.data
 
   return (<Container id={"drink-page"} component="main" maxWidth="xs">
     <Box>
       <Typography component="h1" variant="h5" maxWidth="xs">
         Here's a few of your recently created Drinks      
       </Typography>
-      <DrinkCarousel drinks={drinks.slice(9)} />
+      <DrinkCarousel drinks={drinks} />
     </Box>
     <Box>
       <Typography component="h1" variant ="h5" maxWidth="xs">
         Search for a Drink by Name
       </Typography>
-      <DrinkSearchBar drinks={drinks} onSelect={onSelect}/>
+      <DrinkSearchBar drinks={drinks}/>
     </Box>
     <Box>
     <Typography component="h1" variant ="h5" maxWidth="xs">

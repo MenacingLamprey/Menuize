@@ -5,10 +5,11 @@ import { Typography } from '@mui/material';
 
 interface IProps {
   drinkName : string;
-  onSelect : (drink : string) => void
 }
 
-export const DrinkLink = ({drinkName, onSelect} : IProps) => {
-
-  return (<Typography onClick={e => onSelect(drinkName)} className ={"drink-card"}>{drinkName}</Typography>)
+export const DrinkLink = ({drinkName} : IProps) => {
+  const navigate = useNavigate()
+  let selectDrink :  (drink : string) => void
+  selectDrink = navigate
+  return (<Typography onClick={e => selectDrink(`${drinkName}`)} className ={"drink-card"}>{drinkName}</Typography>)
 }

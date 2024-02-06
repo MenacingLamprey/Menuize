@@ -61,10 +61,12 @@ export const getIngredient = async (req : RequestWithUser, res : Response) => {
     const { ingredientName } = req.params
 
     const rawIngredient = await Ingredient.findOne({
-      where : {name:ingredientName, userId},
+      where : {name:ingredientName, isPublic : true},
       include : [{model : Ingredient, as : 'childIngredients', attributes : ['name', 'id']}]
     });
+
     const {id, name, family, instructions, yield : recipeYield} = rawIngredient!.dataValues
+    
     const childrenIngredients = rawIngredient?.dataValues?.childIngredients?.map((child : IIngredient) => {
       return {
         ingredient : child.name,
@@ -72,7 +74,6 @@ export const getIngredient = async (req : RequestWithUser, res : Response) => {
         amount : child.RecipeIngredient?.amount
       }
     })
-    console.log(recipeYield)
     const ingredient = {id, name, family, instructions, childrenIngredients, yield : recipeYield}
     return res.status(200).send({error : false, res : ingredient })
   } catch(e) {

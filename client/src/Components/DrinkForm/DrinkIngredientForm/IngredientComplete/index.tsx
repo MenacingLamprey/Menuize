@@ -1,18 +1,17 @@
 import { useEffect } from "react"
 import { Autocomplete, TextField } from "@mui/material"
-import { Controller, useFormContext } from "react-hook-form"
+import { useFormContext } from "react-hook-form"
 import { IIngredient } from "../../../../apiTypes"
 import { FormValues } from "../../formTypes"
+
 
 interface IProps {
   potentialIngredients : IIngredient[]
   index : number
 }
 
-export const IngredientComplete = ( {index} : IProps) => {
-  const {control, register, setValue, getValues} = useFormContext<FormValues>()
-  const potentialIngredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
-  console.log(getValues().ingredients[index].ingredient)
+export const IngredientComplete = ( {index, potentialIngredients} : IProps) => {
+  const { register, setValue, getValues} = useFormContext<FormValues>()
 
   useEffect(() => {
     register(`ingredients.${index}.ingredient`);
