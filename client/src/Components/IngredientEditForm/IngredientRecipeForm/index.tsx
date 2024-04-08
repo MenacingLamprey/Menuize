@@ -1,13 +1,14 @@
-import { useContext } from 'react';
+import { useState } from 'react';
 import { useFieldArray, useForm, FormProvider} from 'react-hook-form'
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Box, Button, Container, TextField, Typography } from '@mui/material';
 
-import { addRecipeToIngredient, editIngredientRecipe } from '../../../apiServices/ingredientServices';
-import { CurrentIngredientContext, IngredientContext } from '../../../Contexts/IngredientContext';
+import { editRecipe } from '../../../apiServices/ingredientServices';
 import { IFormIngredient } from '../../DrinkForm/formTypes';
 import { DrinkIngredientForm } from '../../DrinkForm/DrinkIngredientForm';
-import { IIngredient } from '../../../apiTypes';
-import { useNavigate } from 'react-router-dom';
+import { IIngredient, IRecipe, IRecipeIngredient } from '../../../apiTypes';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { fetchProfile } from '../../../Queries/fetchProfile';
 
 export type FormValues = {
   instructions: string;
@@ -16,42 +17,84 @@ export type FormValues = {
 }
 
 export const IngredientRecipeForm = () => {
-  const potentialIngredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[] || useContext(IngredientContext)[0]
-  const [editedIngredient, setEditedIngredient] = useContext(CurrentIngredientContext)
+  const accessToken = localStorage.getItem('accessToken') || ''
   const navigate = useNavigate()
+  const [thisIngredient] = useState<IIngredient>(useLocation().state.ingredient) 
+  const queryClient = useQueryClient()
+  const results = useQuery({ queryKey: ['user', accessToken], queryFn: fetchProfile})
+
+  const mutation = useMutation({mutationFn : (recipe : IRecipe) => {
+    return editRecipe(accessToken, recipe, thisIngredient.id || -1, thisIngredient.recipe?.childIngredients.length! > 0 || false)
+  }, 
+    onSuccess : () => {
+      queryClient.invalidateQueries({queryKey :["ingredient", thisIngredient.name]});
+      queryClient.invalidateQueries({queryKey :["user", accessToken]});
+    }
+  })
+
+  const formatIngredientsForForm = (ingredients : IRecipeIngredient[]) => {
+    return ingredients.map((ingredient)  => {
+      return {
+        amount : ingredient.amount,
+        measurement : ingredient.measurement, 
+        ingredient : ingredient.childIngredientName
+      }
+    })
+  }
+  
 
   const methods  = useForm<FormValues>({
     defaultValues: {
-      instructions : editedIngredient.instructions || "",
-      recipeYield : '',
-      ingredients: editedIngredient.childrenIngredients || []
+      instructions : thisIngredient.recipe?.instructions || "",
+      recipeYield : thisIngredient.recipe?.yield,
+      ingredients: formatIngredientsForForm(thisIngredient.recipe?.childIngredients || [])
     },
     mode: "onBlur"
   });
 
-  const { register, control, reset, handleSubmit} = methods
+  const { register, control, handleSubmit} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
-  const ingredientFormProps = {fields, append, remove, potentialIngredients,register}
 
-  const addFamily = (ingredient : IFormIngredient) => {
-    const family = potentialIngredients.find((ing) => ing.name == ingredient.ingredient)?.family || ""
-    console.log(potentialIngredients)
-    return {...ingredient, family}
+  if (mutation.isPending) {
+    return <span>Submitting...</span>;
   }
 
+  if (mutation.isError) {
+    return <span>Error</span>;
+  }
+
+  if (results.isLoading) {
+    return (
+      <div className="loading-pane">
+        <h2 className="loader">🌀</h2>
+      </div>
+    );
+  }
+  const user = results?.data
+  if (!user) {
+    throw new Error("user not found");
+  }
+  const { ingredients } = user
+  if (!ingredients) {
+    throw new Error("drink not found");
+  }
+
+  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients , register}
+
   const submit = async (data : FormValues) => {
-    const { instructions, recipeYield,ingredients } = data
-    console.log(ingredients)
-    const recipe = ingredients.map((ing) => addFamily(ing))
-    const accessToken = localStorage.getItem('accessToken') || "" 
-    const details = {instructions, recipeYield}
-    let result : any;
-    if(editedIngredient.childrenIngredients?.length){
-      result = await editIngredientRecipe(accessToken,recipe,editedIngredient.id || 0, details)
-    } else {
-      result = await addRecipeToIngredient(accessToken, recipe, editedIngredient.id || 0, details)
+    const { instructions, recipeYield, ingredients } = data
+    const ingredientId = thisIngredient.id || -1
+
+    const updatedChildIngredients : IRecipeIngredient[] = ingredients.map((ing) => {
+      return {measurement : ing.measurement, amount : ing.amount, childIngredientName : ing.ingredient}
+    })
+
+    const recipe : IRecipe = {
+      instructions, yield : recipeYield, childIngredients : updatedChildIngredients, ingredientId
     }
-    setEditedIngredient({...editedIngredient, childrenIngredients : ingredients})
+
+    const res = await mutation.mutateAsync(recipe)
+    
     navigate(-2)
   }
 
@@ -75,7 +118,7 @@ export const IngredientRecipeForm = () => {
       required
       fullWidth
       id="recipeYield"
-      label="recipeYield"
+      label="recipe yield"
       {...register(`recipeYield` as const, {
         required: true
       })}

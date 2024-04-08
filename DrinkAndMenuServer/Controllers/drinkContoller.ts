@@ -63,7 +63,7 @@ export const createDrink = async (req : RequestWithUser, res :Response) => {
       } else if (id ===0) {
         id = (
           (await Ingredient.findOne({where : {name : ingredient.name}}))?.id || 
-          (await Ingredient.create({...ingredient, userId})).id
+          (await Ingredient.create({...ingredient, userId, isPublic : true})).id
         )
       }
       await DrinkIngredient.create({...measures[index], DrinkId :newDrink.id, IngredientId : id})
@@ -82,7 +82,6 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
     const { name, method ,glass, ingredientChanges, numOfIngredients } = req.body
     await Drink.update({method, glass, numOfIngredients}, {where : {name}, fields :['method','glass','numOfIngredients']})
     const {remove, add, changed} = ingredientChanges;
-    console.log(changed)
     let updatedIngredients : IIngredient[] = []
     if(remove.length){
      await DrinkIngredient.destroy({where:{id :remove}})
@@ -90,7 +89,6 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
 
     if (add.length){
       const newIngredients = add.filter((ingredient : any) => {
-        console.log(ingredient)
         return ingredient.IngredientId < 0
       }).map((ingredient : any) => {
         return {name : ingredient.ingredient, userId, family :''}
@@ -122,7 +120,6 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
       method : result?.method,
       Ingredients : result?.Ingredients
     }
-    console.log(updatedIngredients, 'this is updated ingredients')
     res.status(200).send({error : false, res : {updatedDrink, updatedIngredients}})
   } catch (e) {
     console.log(e)

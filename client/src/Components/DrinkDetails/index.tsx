@@ -3,22 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { Box, Button, Container, Typography } from '@mui/material'
 import { useQuery } from '@tanstack/react-query'
 import fetchDrink from '../../Queries/fetchDrink'
-import { CurrentDrinkContext } from '../../Contexts/DrinkContext'
-import { useContext } from 'react'
 import { IngredientLink } from '../IngredientLink'
 
 import './styles.css'
 
 export const DrinkDetails = () => {
   const { drinkName } = useParams()
-  const [ editedDrink ] = useContext(CurrentDrinkContext)
   const nav = useNavigate()
 
-  let drink : IDrink | undefined
-  if(editedDrink.name != drinkName) {
-    if (!drinkName) {
-      throw new Error("no name provided to Drink");
-    }
+  if(!drinkName){
+    return <div>No Drink Selected</div>
+  }
 
     const results = useQuery({queryKey : ["drink", drinkName], queryFn :fetchDrink});
     if (results.isLoading) {
@@ -28,11 +23,7 @@ export const DrinkDetails = () => {
         </div>
       );
     }
-    drink = results?.data?.res
-
-  } else {
-    drink = editedDrink
-  }
+    const drink = results?.data?.res
 
   if (!drink) {
     throw new Error("drink not found");

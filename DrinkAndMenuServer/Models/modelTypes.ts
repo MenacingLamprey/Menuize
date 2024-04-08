@@ -1,17 +1,14 @@
 export interface IIngredient {
   id? : number
   name: string
-  instructions? : string
-  yield? : string
-  family : string
+  family ? : string
   drinks ? : IDrink[]
   userId ? : string
   DrinkIngredient? : IDrinkIngredient
-  RecipeIngredient? : IRecipeIngredient
+  recipe? : IRecipe
   childIngredients? : IIngredient[]
   brands? : IBrand[]
-  isPublic : boolean
-  isOwner? : boolean
+  isPublic? : boolean
 }
 
 export interface IDrink {
@@ -57,15 +54,24 @@ export interface IBrand {
   price : number
 }
 
+export interface IRecipe {
+  id? : number
+  instructions : string
+  yield : string
+  childIngredients? : IRecipeIngredient[]
+  ingredientId? : number
+}
+
 export interface IRecipeIngredient {
-  ingredient : string
-  id : number
+  id? : number
   amount : number
   measurement : string
-  IngredientId : number
-  childIngredientId? : number
-  family? : string
+  childIngredient? : IIngredient
+  childIngredientName : string
+  recipe? : IRecipe
+  recipeId? : number
 }
+
 
 export interface IMenu {
   userId? : string

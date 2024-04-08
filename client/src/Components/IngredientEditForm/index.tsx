@@ -1,28 +1,44 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
-import { useContext, useState } from "react"
+import { useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import { IIngredient } from "../../apiTypes"
-import { CurrentIngredientContext } from "../../Contexts/IngredientContext"
 import { editIngredient } from "../../apiServices/ingredientServices"
 
 export const IngredientEditForm = () => {
   const accessToken = localStorage.getItem('accessToken') || ''
-  const [editedIngredient, setEditedIngredient] = useContext(CurrentIngredientContext)
-  const [thisIngredient] = useState<IIngredient>(useLocation().state.ingredient || editedIngredient) 
+  const [thisIngredient] = useState<IIngredient>(useLocation().state.ingredient) 
   const [newFamily, setNewFamily] = useState<string>(thisIngredient.family || "")
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
+
+  const mutation = useMutation({
+    mutationFn : (family : string) => editIngredient(thisIngredient.name, family, accessToken),
+    onSuccess : () => {queryClient.invalidateQueries({queryKey :["ingredient", thisIngredient.name]});}
+  },queryClient)
+
+  if (mutation.isPending) {
+    return <span>Submitting...</span>;
+  }
+
+  if (mutation.isError) {
+    return <span>Error</span>;
+  }
+
+  if (mutation.isSuccess) {
+    return (<div>
+      <span>Post submitted!</span>
+    </div>)
+  }
 
   const submit = async () => {
-    const result = await editIngredient(thisIngredient.name, newFamily, accessToken)
-    if (result == 1) { 
-      setEditedIngredient({name: thisIngredient.name, family: newFamily})
-      navigate(-1)
-    }
+    const result = await mutation.mutateAsync(newFamily)
+    navigate(-1)
   }
 
   const editRecipe = () => {
-    setEditedIngredient(thisIngredient)
-    navigate(`/ingredients/add-recipe/`)
+    console.log(thisIngredient)
+    navigate(`/ingredients/add-recipe/`, {state:{ingredient :  thisIngredient}})
   }
 
   return(<Container component={'form'}>
@@ -34,9 +50,9 @@ export const IngredientEditForm = () => {
       value={newFamily}
       onChange={(e) => setNewFamily(e.target.value)}
     />
-    {thisIngredient.childrenIngredients ? (<Box>
+    {thisIngredient.recipe?.ingredients ? (<Box>
      <Box >
-      Recipe: {thisIngredient.childrenIngredients?.map(ingredient=><Typography>{ingredient.ingredient}</Typography>)}
+      Recipe: {thisIngredient.recipe?.ingredients?.map(ingredient=><Typography>{ingredient.childIngredient}</Typography>)}
     </Box> 
     <Button onClick={editRecipe}>Edit Recipe</Button>
     </Box>): (

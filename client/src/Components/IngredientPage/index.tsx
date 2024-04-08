@@ -1,15 +1,32 @@
 import { useNavigate } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
-import { IIngredient, IMemoryUser } from "../../apiTypes";
-import { IngredientForm } from "./IngredientForm";
-import { IngredientList } from "./IngredientList";
 
 import { IngredientSearchBar } from "./IngredientSearchBar";
+import { useQuery } from "@tanstack/react-query";
+import { fetchProfile } from "../../Queries/fetchProfile";
 
 export const IngredientPage = () => {
-  const accessToken = localStorage.getItem('accessToken');
   const navigate = useNavigate();
-  const ingredients = JSON.parse(localStorage.getItem('ingredients') || "") as IIngredient[]
+  const accessToken = localStorage.getItem('accessToken') || ''
+  
+  if (!accessToken) {
+    throw new Error("no access token found");
+  }
+
+  const results = useQuery({queryKey :["user", accessToken], queryFn:  fetchProfile});
+
+  if (results.isLoading) {
+    return (
+      <div className="loading-pane">
+        <h2 className="loader">🌀</h2>
+      </div>
+    );
+  }
+  const user = results?.data
+  if (!user) {
+    throw new Error("user not found");
+  }
+  const {drinks, ingredients} = results.data
 
   return (<div id ={"ingredient-page"}>
     <Box>

@@ -1,3 +1,4 @@
+import { FormValues, IFormIngredient } from "../Components/DrinkForm/formTypes";
 import { IDrink, IIngredient } from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
@@ -58,6 +59,21 @@ export const editDrink = async (changes : FieldDifferences , accessToken : strin
     body: JSON.stringify(changes)
   }
   const res = await fetch(`${apiUrl}/edit`, fetchOptions)
+  const data = await res.json()
+  console.log(data)
+  return data
+}
+
+export const altEditDrink = async (drink : FormValues, accessToken : string) => {
+  const fetchOptions = { 
+    method: "PATCH",
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({drink})
+  }
+  const res = await fetch(`${apiUrl}/altEdit`, fetchOptions)
   const data = await res.json()
   console.log(data)
   return data

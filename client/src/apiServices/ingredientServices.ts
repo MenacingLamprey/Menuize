@@ -1,5 +1,5 @@
 import { Details } from "@mui/icons-material";
-import { IIngredient } from "../apiTypes";
+import { IIngredient, IRecipe } from "../apiTypes";
 import { IFormIngredient } from "../Components/DrinkForm/formTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
@@ -63,21 +63,19 @@ export const deleteIngredient = async (ingredientName : string, accessToken : st
   return data.res
 }
 
-interface IDetails {
-  recipeYield : string
-  instructions : string
+export const editRecipe = async (accessToken : string, recipe : IRecipe, ingredientId : number, changed : boolean) => {
+  if(!changed) return await addRecipeToIngredient(accessToken,recipe, ingredientId)
+  return await editIngredientRecipe(accessToken, recipe, ingredientId)
 }
 
-export const addRecipeToIngredient = async (
-  accessToken : string, recipe : IFormIngredient[], ingredientId : number, details : IDetails
-  ) => {
+export const addRecipeToIngredient = async (accessToken : string, recipe : IRecipe, ingredientId : number) => {
   const fetchOptions = { 
     method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({recipe, details})
+    body: JSON.stringify({recipe})
   }
   const res = await fetch(`${apiUrl}/addRecipe/${ingredientId}`, fetchOptions)
   const data = await res.json()
@@ -85,15 +83,14 @@ export const addRecipeToIngredient = async (
 }
 
 export const editIngredientRecipe = async (
-  accessToken : string, recipe : IFormIngredient[], ingredientId : number, details : IDetails
-  ) => {
+  accessToken : string, recipe : IRecipe, ingredientId : number) => {
     const fetchOptions = { 
       method: "PATCH",
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({recipe, details})
+      body: JSON.stringify({recipe})
     }
     const res = await fetch(`${apiUrl}/editRecipe/${ingredientId}`, fetchOptions)
     const data = await res.json()

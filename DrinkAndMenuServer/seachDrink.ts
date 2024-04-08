@@ -11,11 +11,13 @@ const ingredientArrayToString = (ingredientArray : string[]) => {
 const suitableCocktails = async(ingredientString : string, userId : string) : Promise<Drink[] | undefined> => {
   try {
     const [results] = await sequelize.query(
-      `SELECT d.name as drink, i.name as ingredient, d.id, d."numOfIngredients" FROM drinks d
+      `SELECT d.name as drink, d.id, d."numOfIngredients" FROM drinks d
         JOIN "drinkIngredients" di ON di."DrinkId" = d.id
         JOIN ingredients i ON di."IngredientId" = i.id
         WHERE i.name = ANY (ARRAY[${ingredientString}]) AND ((d."isPublic" = 't') OR (d."userId" ='${userId}'))
-        GROUP BY drink, d.id, ingredient, d."numOfIngredients"`  
+        GROUP BY drink, d.id, d."numOfIngredients"
+        HAVING COUNT(*) = d."numOfIngredients"
+        `  
     )
     console.log(results)
     return results as Drink[]

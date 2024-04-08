@@ -3,8 +3,9 @@ import { Ingredient } from "../Models/Ingredient";
 import { RequestWithUser } from "../Middleware/auth";
 import { User } from "../Models/User";
 import { IngredientFamily } from "../Models/IngredientFamily";
-import { IIngredient, IRecipeIngredient } from "../Models/modelTypes";
+import { IIngredient, IRecipe, IRecipeIngredient } from "../Models/modelTypes";
 import { RecipeIngredient } from "../Models/RecipeIngredient";
+import { Recipe } from "../Models/Recipe";
 
 
 export const createIngredient = async (req : RequestWithUser, res : Response) => {
@@ -62,19 +63,18 @@ export const getIngredient = async (req : RequestWithUser, res : Response) => {
 
     const rawIngredient = await Ingredient.findOne({
       where : {name:ingredientName, isPublic : true},
-      include : [{model : Ingredient, as : 'childIngredients', attributes : ['name', 'id']}]
+      include : [{
+        model : Recipe, as : 'recipe', 
+        include : [{
+          model :RecipeIngredient, as : 'childIngredients'
+        }]
+      }]
     });
-
-    const {id, name, family, instructions, yield : recipeYield} = rawIngredient!.dataValues
-    
-    const childrenIngredients = rawIngredient?.dataValues?.childIngredients?.map((child : IIngredient) => {
-      return {
-        ingredient : child.name,
-        measurement : child.RecipeIngredient?.measurement,
-        amount : child.RecipeIngredient?.amount
-      }
-    })
-    const ingredient = {id, name, family, instructions, childrenIngredients, yield : recipeYield}
+    console.log('get ingredient')
+    console.log(rawIngredient)
+    const {id, name, family, recipe } = rawIngredient!.dataValues
+    const ingredient = {id, name, family, recipe}
+    console.log(recipe)
     return res.status(200).send({error : false, res : ingredient })
   } catch(e) {
     console.log(e)
@@ -109,18 +109,32 @@ export const addRecipeToIngredient = async (req : RequestWithUser, res : Respons
   try {
     const userId = req.user!.getDataValue('uid')
     const { ingredientId } = req.params
-    const { recipe, details }  = req.body
-    const { recipeYield, instructions } = details
-    
-    await Ingredient.update({instructions, yield : recipeYield}, {where : {userId, id : ingredientId}})
-    const savedRecipes = await Promise.all(recipe.map(async (ingredient : IRecipeIngredient, index:number) => {
-      const [storedIngredient] = await Ingredient.findOrCreate({where : {name : ingredient.ingredient, family : ingredient.family}})
-      const { id } = storedIngredient
-      return {...ingredient, childIngredientId : id, IngredientId : parseInt(ingredientId)}
-    }))
+    const { recipe } : {recipe : IRecipe}  = req.body
+    const {childIngredients} = recipe
+    const IngredientId = parseInt(ingredientId)
+    const parentIngredient = await Ingredient.findByPk(ingredientId, {include : ['recipe']}) 
+    if(!parentIngredient) {
+      return res.status(403).send({error : true, res :`Ingredient With Id ${ingredientId}, Could Not Be Found`})
+    }
+    if(parentIngredient.recipe) return res.status(400).send({error : true , res : "Ingredient Already Has Recipe"})
 
-    await RecipeIngredient.bulkCreate(savedRecipes)
-    return res.status(200).send({error : false, res : []})
+    const savedRecipe = await Recipe.create(recipe)
+    let savedChildIngredients : RecipeIngredient[] = []
+
+    if(childIngredients) {
+      savedChildIngredients = await RecipeIngredient.bulkCreate(childIngredients)
+
+      savedChildIngredients.forEach(async (ingredient) => {
+        const [child] = await Ingredient.findOrCreate({where: {name : ingredient.childIngredientName}})
+        await ingredient.setChildIngredient(child)
+      })
+      await savedRecipe.addChildIngredients(savedChildIngredients)
+      await parentIngredient.setRecipe(savedRecipe)
+    }
+    
+    const retunRecipe :IRecipe = {...savedRecipe, childIngredients : savedChildIngredients, ingredientId: IngredientId}
+    console.log(retunRecipe)
+    return res.status(200).send({error : false, res : retunRecipe})
   } catch(e) {
     console.log(e)
     res.status(500).send({error : true, res : "Error Adding Recipe To Ingredient"})
@@ -131,21 +145,35 @@ export const editIngredientRecipe = async (req : RequestWithUser, res : Response
   try{
     const userId = req.user!.getDataValue('uid')
     const { ingredientId } = req.params
-    const { recipe, details }  = req.body
-    const { recipeYield, instructions } = details
-    const result = await Ingredient.update({instructions, yield : recipeYield}, {where : {userId, id : ingredientId}})
-    console.log(result)
-    const updatedIngredient = await Ingredient.findOne({where : {userId, id : ingredientId}})
-    console.log(updatedIngredient)
-    const savedRecipes = await Promise.all(recipe.map(async (ingredient : IRecipeIngredient, index:number) => {
-      const [storedIngredient] = await Ingredient.findOrCreate({where : {name : ingredient.ingredient, family : ingredient.family}})
-      const { id } = storedIngredient
-      return {...ingredient, childIngredientId : id, IngredientId : parseInt(ingredientId)}
-    }
-    ))
-    await RecipeIngredient.destroy({where : {IngredientId : parseInt(ingredientId)}})
-    await RecipeIngredient.bulkCreate(savedRecipes)
-    return res.status(200).send({error : false, res : []})
+    const { recipe }  = req.body
+   
+    const savedParentIngredient = await Ingredient.findByPk(ingredientId, {
+      include : [{ 
+        model : Recipe,
+        as :'recipe',
+        include : [{
+          model : RecipeIngredient,
+          as : 'childIngredients'
+        }]
+      }]
+    })
+    if(!savedParentIngredient) return res.status(403).send({error : true, res : "Couldn't find Ingredient"})
+    const {recipe : savedRecipe} = {...savedParentIngredient}
+    if(!savedRecipe) return res.status(403).send({error : true, res : "No Recipe Found"})
+    await savedRecipe.update(recipe)
+    await RecipeIngredient.destroy({where: {recipeId : savedRecipe.id}})
+
+    const savedChildIngredients = await RecipeIngredient.bulkCreate(recipe.childIngredients)
+
+    savedChildIngredients.forEach(async (ingredient) => {
+      const [child] = await Ingredient.findOrCreate({where: {name : ingredient.childIngredientName}})
+      await ingredient.setChildIngredient(child)
+    })
+    savedRecipe.addChildIngredients(savedChildIngredients)
+    await savedParentIngredient.setRecipe(savedRecipe)
+    console.log(savedParentIngredient)
+    res.status(201).send({error : false, res : savedParentIngredient.recipe})
+
   } catch(e) {
     console.log(e)
     res.status(500).send({error : true, res : "Error Editing Ingredient Recipe"})

@@ -18,7 +18,7 @@ export const MenuDetails = ({menu} : IProps) => {
     <Container id='menu-container'>
       <Typography variant="h6">{menu.title}</Typography>
       {menu.drinks.map(drink => (
-        <DrinkLink drinkName={drink.name} onSelect={()=>onSelect(drink.name)} />
+        <DrinkLink drinkName={drink.name} />
       ))}
     </Container>
   );

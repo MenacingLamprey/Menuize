@@ -5,8 +5,10 @@ import { IDrink, IIngredient, IMenu } from "../../../apiTypes"
 import { MenuDrinks } from "./MenuDrinks"
 import { DrinkCoral } from "./DrinkCoral"
 import { MenuTitle } from "./MenuTitle"
+import { useNavigate } from "react-router-dom"
 
 export const MenuForm = () => {
+  const navigate = useNavigate()
   const menuDrinksState = useState<IDrink[]>([])
   const menuTitleState = useState<string>('')
 
@@ -20,6 +22,7 @@ export const MenuForm = () => {
     }
 
     createMenu(accessToken!, menu)
+    navigate(-1)
   }
 
   return (<Container> 

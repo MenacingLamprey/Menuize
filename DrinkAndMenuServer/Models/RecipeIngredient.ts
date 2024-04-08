@@ -1,4 +1,4 @@
-import { Model, Optional, DataTypes, Association } from "sequelize";
+import { Model, Optional, DataTypes, Association, HasOneSetAssociationMixin } from "sequelize";
 
 import { sequelize } from ".";
 import { IRecipeIngredient } from './modelTypes';
@@ -10,16 +10,17 @@ export class RecipeIngredient extends Model<IRecipeIngredient, RecipeIngredientC
   public id!: number;
   public measurement! :string
   public amount! : number
-  public ingredient! : string
-  public IngredientId! : number
-
+  public childIngredient! : Ingredient
+  declare childIngredientName : string
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
   public static associations: {
-    Ingredient: Association<Ingredient, RecipeIngredient>;
+    childIngredient: Association<Ingredient, RecipeIngredient>;
   }
+
+  declare setChildIngredient : HasOneSetAssociationMixin<IRecipeIngredient, Ingredient>
 
 }
   
@@ -29,6 +30,9 @@ RecipeIngredient.init({
     autoIncrement: true,
     primaryKey: true,
   },
+  recipeId : {
+    type: DataTypes.INTEGER
+  },
   measurement: {
     type: DataTypes.TEXT,
     allowNull: false,
@@ -36,13 +40,8 @@ RecipeIngredient.init({
   amount: {
     type: DataTypes.FLOAT,
   },
-  ingredient : {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  IngredientId : {
-    type: DataTypes.INTEGER,
-    allowNull: false,
+  childIngredientName : {
+    type : DataTypes.TEXT
   }
 },
   {

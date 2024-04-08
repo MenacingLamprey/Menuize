@@ -1,15 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { Box, Button, Container, TextField, Typography } from "@mui/material"
 import { IDrink, IIngredient } from "../../apiTypes"
-import { useContext, useState } from "react";
 import { useFieldArray, useForm, FormProvider } from "react-hook-form";
 import { FormValues, IFormIngredient } from "../DrinkForm/formTypes";
 import { DrinkIngredientForm } from "../DrinkForm/DrinkIngredientForm";
 import { editDrink } from "../../apiServices";
 import { getDifferences } from "./findChanges"
-import { CurrentDrinkContext } from "../../Contexts/DrinkContext";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchProfile } from "../../Queries/fetchProfile";
+import { altEditDrink } from "../../apiServices/drinkServices";
 
 const formatIngredientsForForm = (ingredients : IIngredient[]) => {
   return ingredients.map((ingredient)  => {
@@ -23,11 +22,19 @@ const formatIngredientsForForm = (ingredients : IIngredient[]) => {
 
 export const DrinkEditForm = () => {
   const accessToken = localStorage.getItem('accessToken') || ''
-  const [thisDrink, setThisDrink] = useState<IDrink>(useLocation().state.drink)
-  const [_, setEditedDrink] = useContext(CurrentDrinkContext)
+  const thisDrink : IDrink = useLocation().state.drink
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
 
-  const results = useQuery({queryKey :["user", accessToken], queryFn :fetchProfile});
+  const { data : user, isLoading } = useQuery({queryKey :["user", accessToken], queryFn :fetchProfile});
+
+  const mutation = useMutation({mutationFn : (differences : any) => editDrink(differences, accessToken), 
+    onSuccess : () => {
+      queryClient.invalidateQueries({queryKey :["drink", thisDrink.name]});
+      queryClient.invalidateQueries({queryKey :["user", accessToken]});
+    }
+  })
+
   const methods  = useForm<FormValues>({
     defaultValues: {
       drinkName : thisDrink.name,
@@ -38,10 +45,19 @@ export const DrinkEditForm = () => {
     mode: "onBlur"
   });
 
-  const { register, control, handleSubmit, getValues} = methods
+  const { register, control, handleSubmit} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
 
-  if (results.isLoading) {
+  
+  if (mutation.isPending) {
+    return <span>Submitting...</span>;
+  }
+
+  if (mutation.isError) {
+    return <span>Error</span>;
+  }
+
+  if (isLoading) {
     return (
       <div className="loading-pane">
         <h2 className="loader">🌀</h2>
@@ -49,15 +65,12 @@ export const DrinkEditForm = () => {
     );
   }
 
-  const user = results?.data
-
   if (!user) {
     throw new Error("user not found");
   }
 
-  const { ingredients } = results.data
+  const { ingredients : potentialIngredients } = user
 
-  const potentialIngredients = ingredients
   const ingredientFormProps = {fields, append, remove, potentialIngredients}
 
   const appendIngredientId = (ingredient : IFormIngredient)  => {
@@ -94,10 +107,13 @@ export const DrinkEditForm = () => {
   }
 
   const submit = async (data : FormValues) => {
-    const accessToken = localStorage.getItem('accessToken') || ''
     const differences = {name : data.drinkName, ...getDrinkChanges(data)}
+    //Alternative (unfinished) form of editing drink, meant to remove unnecessary info
+    //to complete(in current plan), ingredient info would need to be extracted from ingredient autoComplete
+    //(and then have that info used in the altDrinkEdit on server side)
+    //await altEditDrink(data, accessToken) 
     const {add, remove, changed} = differences
-    console.log(add, remove, changed)
+    
     const updatedAdd = add?.map((ingredient : IFormIngredient) => {
       return appendIngredientId(ingredient)
     })
@@ -110,12 +126,9 @@ export const DrinkEditForm = () => {
     })
 
     differences['ingredientChanges'] = {add : updatedAdd, remove:updatedRemoved, changed : updatedChanged}
-    const results = (await editDrink(differences, accessToken)).res
-    const {updatedDrink, updatedIngredients} = results
-    const allIngredients = [...updatedIngredients, ...potentialIngredients]
-    localStorage.setItem('ingredients', JSON.stringify(allIngredients))
-    setEditedDrink(updatedDrink)
+    const dif = await mutation.mutateAsync(differences)
     navigate(-1)
+
   }
 
   return(

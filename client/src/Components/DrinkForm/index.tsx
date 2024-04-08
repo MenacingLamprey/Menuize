@@ -80,7 +80,7 @@ export const DrinkForm = () => {
   const submit = async (data : FormValues) => {
     const {drinkName, glass, ingredients : usedIngredients, method } = data
     const {drinkIngredients, measures, newIngredients} = formatIngredients(usedIngredients,ingredients)
-    const numOfIngredients = ingredients.length
+    const numOfIngredients = usedIngredients.length
     const drink = {name:drinkName, glass, numOfIngredients, method, measures, Ingredients:drinkIngredients, newIngredients}
     const success = await mutation.mutateAsync(drink)
     console.log(success)

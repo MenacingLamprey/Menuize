@@ -1,17 +1,15 @@
 export interface IIngredient {
   id? : number
   name: string
-  instructions? : string | null
-  family : string
-  crafted? : boolean
+  recipe? : IRecipe
+  family? : string
+  homeMade? : boolean
   Drinks ? : IDrink[]
   userId ? : string
   updatedAt? : string
   createdAt? :string
   familyId? : number
-  childrenIngredients? : IRecipeIngredient[]
   DrinkIngredient? : IDrinkIngredient
-  yield? : string
 }
 
 export interface IMemoryUser {
@@ -26,8 +24,7 @@ export interface IDrink {
   description? : string
   method? :string
   glass : string
-  measures? : IDrinkIngredient[]
-  
+  measures? : IDrinkIngredient[]  
   numOfIngredients : number
   Ingredients : IIngredient[]
   userId ? : string
@@ -72,11 +69,17 @@ export interface IIngredientFamily {
   parentFamilyId? : number
 }
 
+export interface IRecipe {
+  ingredientId : number
+  childIngredients : IRecipeIngredient[]
+  yield : string
+  instructions : string
+}
+
 export interface IRecipeIngredient {
-  ingredient: string
   id? : number
   amount : number
   measurement : string
-  IngredientId? : number
-  childIngredientId? : number
+  childIngredient? : number
+  childIngredientName : string
 }

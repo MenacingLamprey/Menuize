@@ -11,9 +11,10 @@ import { DrinkLink } from "../../DrinkLink";
 
 interface IProps {
   drinks : IDrink[]
+  addDrink ? : (drinkName : string) => void
 }
 
-export const DrinkSearchBar = ({drinks} : IProps) => {
+export const DrinkSearchBar = ({drinks, addDrink} : IProps) => {
   const [SearchQuery , setSearchQuery] = useState("")
  
   const filterData = (query : string, data : string[]) => {
@@ -40,9 +41,10 @@ export const DrinkSearchBar = ({drinks} : IProps) => {
       <SearchIcon style={{ fill: "blue" }} />
     </IconButton>
   </form>
+  
   {SearchQuery.length > 1 && <List>
     {filterData(SearchQuery, drinks.map((drink) => drink.name)).map(item => (
-      <li id={'drink-search-item'}><DrinkLink drinkName={item}/></li>)
+      <li id={'drink-search-item'}><DrinkLink drinkName={item} addDrink={addDrink}/></li>)
     )}
   </List>}
   </Container>
