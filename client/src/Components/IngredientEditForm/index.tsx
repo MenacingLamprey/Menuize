@@ -50,9 +50,9 @@ export const IngredientEditForm = () => {
       value={newFamily}
       onChange={(e) => setNewFamily(e.target.value)}
     />
-    {thisIngredient.recipe?.ingredients ? (<Box>
+    {thisIngredient.recipe?.childIngredients ? (<Box>
      <Box >
-      Recipe: {thisIngredient.recipe?.ingredients?.map(ingredient=><Typography>{ingredient.childIngredient}</Typography>)}
+      Recipe: {thisIngredient.recipe?.childIngredients?.map(ingredient=><Typography>{ingredient.childIngredient}</Typography>)}
     </Box> 
     <Button onClick={editRecipe}>Edit Recipe</Button>
     </Box>): (
