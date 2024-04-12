@@ -10,7 +10,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { ThemeProvider } from '@mui/material/styles';
-import { ThemeContext } from '../../Contexts/ThemeContext';
 
 import { Auth }from '../../utils/Auth';
 import { login  } from '../../apiServices/authApi';
@@ -21,7 +20,6 @@ interface IProps {
 
 export const Login = ({ setIsAuthenticated} : IProps) => {
   const navigate = useNavigate();
-  const [theme] = useContext(ThemeContext)
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -48,7 +46,6 @@ export const Login = ({ setIsAuthenticated} : IProps) => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -112,6 +109,5 @@ export const Login = ({ setIsAuthenticated} : IProps) => {
           </Box>
         </Box>
       </Container>
-    </ThemeProvider>
   );
 };

@@ -8,6 +8,7 @@ import { Profile } from './Components/Profile';
 import { IngredientPage } from './Components/IngredientPage';
 
 import { Auth } from './utils/Auth';
+import { IDrink, IIngredient, IMemoryUser } from './apiTypes';
 
 import './App.css';
 import { DrinkPage } from './Components/DrinkPage';
@@ -21,6 +22,7 @@ import { IngredientRecipeForm } from './Components/IngredientEditForm/Ingredient
 import { MenuPage } from './Components/MenuPage';
 import { MenuForm } from './Components/MenuPage/MenuForm';
 import { GuestPage } from './Components/GuestPage';
+import { IngredientForm } from './Components/IngredientPage/IngredientForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -64,6 +66,7 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path ="/guest" element ={<GuestPage/>} />
           <Route path ="/ingredients" element={<IngredientPage />} />
+          <Route path ='ingredient-form' element={<IngredientForm />} />
           <Route path ='/drink-form' element ={<DrinkForm />} />
           <Route path ='/menu-form' element ={<MenuForm />} />
           <Route path ="/drinks" element={<DrinkPage />} />
