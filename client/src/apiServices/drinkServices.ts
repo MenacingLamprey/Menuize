@@ -28,14 +28,14 @@ export const fetchAllUserDrinks = async (username : string) => {
 }
 
 export type ExtendedDrink = IDrink & {newIngredients : IIngredient[]}
-export const createDrink = async (drink : ExtendedDrink, accessToken : string) => {
+export const createDrink = async (drink : ExtendedDrink, accessToken : string, addToMenu : boolean) => {
   const fetchOptions = { 
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify(drink)
+    body: JSON.stringify({drink, addToMenu})
   }
   const res = await fetch(`${apiUrl}/create`, fetchOptions)
   const data = await res.json()

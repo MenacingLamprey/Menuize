@@ -16,7 +16,6 @@ interface IProps {
 
 export const DrinkSearchBar = ({drinks, addDrink} : IProps) => {
   const [SearchQuery , setSearchQuery] = useState("")
- 
   const filterData = (query : string, data : string[]) => {
     if (!query) {
       return data;
@@ -43,8 +42,8 @@ export const DrinkSearchBar = ({drinks, addDrink} : IProps) => {
   </form>
   
   {SearchQuery.length > 1 && <List>
-    {filterData(SearchQuery, drinks.map((drink) => drink.name)).map(item => (
-      <li id={'drink-search-item'}><DrinkLink drinkName={item} addDrink={addDrink}/></li>)
+    {filterData(SearchQuery, drinks.map((drink) => drink.name)).map(item => {
+      return <li id={'drink-search-item'}><DrinkLink drinkName={item} addDrink={addDrink}/></li>}
     )}
   </List>}
   </Container>

@@ -12,22 +12,24 @@ export class Menu extends Model<IMenu, MenuCreationAttributes> {
   public title! :string
   public current! : boolean
   public userId! : string
+  declare drinks : Drink[]
+  declare ingredients : Ingredient[]
 
-  public addIngredients!: HasManyAddAssociationsMixin<Ingredient, number>
+  public addIngredients!: HasManyAddAssociationsMixin<Ingredient, Menu>
   public getIngredients!:  HasManyGetAssociationsMixin<Ingredient>
 
-  public addDrinks!: HasManyAddAssociationsMixin<Drink, number>
+  public addDrinks!: HasManyAddAssociationsMixin<Drink, Menu>
   public getDrinks!:  HasManyGetAssociationsMixin<Drink>
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
   public static associations: {
-    specialtyIngredients : Association<Menu, Ingredient>
+    ingredients : Association<Menu, Ingredient>
     drinks : Association<Menu, Drink>
   };   
 }
-  
+
 Menu.init({
     id: {
       type: DataTypes.INTEGER,
@@ -45,6 +47,11 @@ Menu.init({
     current: {
       type: DataTypes.BOOLEAN,
       allowNull: false,
+    },
+    inProgress : {
+      type :DataTypes.BOOLEAN,
+      defaultValue : false,
+      allowNull : false
     }
   },
   {
@@ -56,5 +63,5 @@ Menu.init({
 Menu.belongsToMany(Drink, { through: 'menuDrinks', as :'drinks'});
 Drink.belongsToMany(Menu, { through: 'menuDrinks', as: 'menus'});
 
-Menu.belongsToMany(Ingredient, { through: 'menuIngredients',});
-Ingredient.belongsToMany(Menu, { through: 'menuIngredients' });
+Menu.belongsToMany(Ingredient, { through: 'menuIngredients', as :'ingredients'});
+Ingredient.belongsToMany(Menu, { through: 'menuIngredients', as : 'menus' });

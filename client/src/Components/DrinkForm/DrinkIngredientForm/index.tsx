@@ -21,20 +21,23 @@ interface IProps {
 export const DrinkIngredientForm = ({ingredientFormProps} : IProps) => {
   const {potentialIngredients, fields, append, remove} = ingredientFormProps
   const { register } = useFormContext()
-  return (<Box>
+
+  return (<Box >
     <Typography component="p" >Ingredients</Typography>
       {fields.map((field,index) => (
         <Box key={field.id}>
         <Box sx={{display :'flex', flexDirection :"row"}}>
         <TextField 
-          label="amount"
+          fullWidth
+          label="amount"  
           key={field.id+'A'} 
           {...register(`ingredients.${index}.amount` as const, {
             valueAsNumber: true,
             required: true
           })}
         /> 
-        <TextField  
+        <TextField
+          className ='measurement-input'
           label="measurement"
           defaultValue="oz"
           key={field.id+'M'} 

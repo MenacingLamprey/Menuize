@@ -17,6 +17,7 @@ export const MenuPage = () => {
     );
   }
   const menu = results?.data?.res
+
   if(!menu) {
     return <Container>
       <Typography variant="h4">No menu set current!</Typography>
@@ -31,7 +32,7 @@ export const MenuPage = () => {
 
   return (<Container>
     <Box>
-    <Typography variant="h4">Current Menu</Typography>
+    <Typography variant="h5">Current Menu</Typography>
     <MenuDetails menu={menu} />
     <Typography variant="h6"><Button>Menu Archive</Button></Typography>
     <Typography variant="h6"><Button onClick={() => navigate('/menu-form')}>Create New Menu</Button></Typography>

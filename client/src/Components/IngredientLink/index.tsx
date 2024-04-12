@@ -1,9 +1,18 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@mui/material";
 
 interface IProps {
   ingredientName : string;
 }
 
 export const IngredientLink = ({ingredientName} : IProps) => {
-  return (<Link to={`/ingredients/${ingredientName}`} className ={"ingredient-card"}>{ingredientName}</Link>)
+  const navigate = useNavigate()
+  return (
+    <Button
+      sx={{}}
+      onClick={e => navigate(`/ingredients/${ingredientName}`)}
+      className ={"ingredient-card"}
+    > 
+      {ingredientName} 
+    </Button>)
 }

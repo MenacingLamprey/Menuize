@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import { Link } from "react-router-dom";
+import { Button } from '@mui/material';
+
 import './styles.css'
-import { Typography } from '@mui/material';
 
 interface IProps {
   drinkName : string;
@@ -11,7 +11,19 @@ interface IProps {
 export const DrinkLink = ({drinkName, addDrink} : IProps) => {
   const navigate = useNavigate()
   let selectDrink :  (drink : string) => void
-  addDrink ? selectDrink = addDrink : selectDrink = navigate  
+  let actionString = ''
+  if(addDrink) {
+    selectDrink = addDrink
+  } else {
+    selectDrink = navigate
+    actionString = '/drinks/'
+  }
 
-  return (<Typography onClick={e => selectDrink(`/drinks/${drinkName}`)} className ={"drink-card"}>{drinkName}</Typography>)
+  return (
+    <Button
+      onClick={e => selectDrink(`${actionString}${drinkName}`)}
+      className ={"drink-card"}>
+        {drinkName}
+    </Button>
+  )
 }

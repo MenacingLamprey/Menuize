@@ -7,6 +7,7 @@ import { IIngredient } from "../Models/modelTypes";
 import { User } from "../Models/User";
 import { sequelize } from "../Models";
 import { StrippedDrink } from "../Models/StrippedDrink";
+import { Menu } from "../Models/Menu";
 
 export const getPublicDrinks = async (req : Request, res : Response) => {
   try {
@@ -48,7 +49,8 @@ export const getAllDrinks =async (req :Request, res :Response) => {
 
 export const createDrink = async (req : RequestWithUser, res :Response) => {
   try {
-    const {name:drinkName, glass, numOfIngredients, measures, method, Ingredients, isPublic} = req.body;
+    const {drink, addToMenu} = req.body;
+    const {name:drinkName, glass, numOfIngredients, measures, method, Ingredients, isPublic} = drink
     const userId = req.user!.getDataValue('uid')
     const newDrink = await Drink.create(
       {name : drinkName, glass, numOfIngredients, method, userId, isPublic : true},
@@ -68,7 +70,10 @@ export const createDrink = async (req : RequestWithUser, res :Response) => {
       }
       await DrinkIngredient.create({...measures[index], DrinkId :newDrink.id, IngredientId : id})
     })
-    
+    if (addToMenu) {
+      const menu = await Menu.findOne({where : {inProgress : true}})
+      console.log(menu)
+    }
     res.status(201).send({error :false, res : newDrink})
   } catch (e) {
     console.log(e);
@@ -96,7 +101,13 @@ export const editDrink = async (req : RequestWithUser, res : Response) => {
 
       const addedIngredients = await Ingredient.bulkCreate(newIngredients)
       updatedIngredients = addedIngredients.map((ingredient : any) => {
-        return {id : ingredient.id, name : ingredient.name, family : ingredient.family, isPublic : ingredient.isPublic || false}
+        return {
+          id : ingredient.id,
+          name : ingredient.name,
+          family : ingredient.family,
+          isPublic : ingredient.isPublic || false,
+          isUnique : ingredient.isUnique
+        }
       })
       const createdIds = updatedIngredients.map((record) => ({id: record.id, name : record.name}));
       add.forEach((ingredient:any)=> {

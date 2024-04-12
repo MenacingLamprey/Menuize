@@ -9,6 +9,7 @@ export interface IIngredient {
   childIngredients? : IIngredient[]
   brands? : IBrand[]
   isPublic? : boolean
+  isUnique? : boolean
 }
 
 export interface IDrink {
@@ -78,6 +79,7 @@ export interface IMenu {
   id : number
   title : string
   drinks?: IDrink[]
-  speaciltyIngredients? : IIngredient[]
+  ingredients? : IIngredient[]
   current : boolean
+  inProgress : boolean
 }

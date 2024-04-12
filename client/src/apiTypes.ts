@@ -59,8 +59,9 @@ export interface IAuth {
 export interface IMenu {
   title : string
   drinks: IDrink[]
-  specialtyIngredients : IIngredient[]
+  ingredients : IIngredient[]
   current : boolean
+  inProgess : boolean
 }
 
 export interface IIngredientFamily {

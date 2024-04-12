@@ -25,6 +25,7 @@ export class Ingredient extends Model<IIngredient, IngredientCreationAttributes>
   declare isPublic : boolean
   declare recipe : Recipe
   declare userId : string
+  declare isUnique : boolean
   
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -64,6 +65,11 @@ Ingredient.init(
       type : DataTypes.BOOLEAN,
       allowNull : false,
       defaultValue : false
+    },
+    isUnique : {
+      type :DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue : true
     }
   },
 
@@ -75,6 +81,7 @@ Ingredient.init(
 
 Ingredient.belongsToMany(Drink, { through: DrinkIngredient});
 Drink.belongsToMany(Ingredient, {through : DrinkIngredient})
+
 Recipe.belongsTo(Ingredient, {as : 'ingredient'})
 
 Ingredient.hasOne(Recipe, {as : 'ingredient'})

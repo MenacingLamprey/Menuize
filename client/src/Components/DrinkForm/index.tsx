@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { useFieldArray, useForm, FormProvider} from 'react-hook-form'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Box, Button, Container, TextField, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Container, FormControlLabel, TextField, Typography } from '@mui/material';
 
 import { FormValues } from './formTypes';
 
@@ -16,6 +17,7 @@ import './styles.css'
 export const DrinkForm = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate()
+  const [addToMenu, setAddToMenu]  = useState<boolean>(useLocation().state || false)
   const accessToken = localStorage.getItem('accessToken') || ''
 
   if (!accessToken) {
@@ -34,10 +36,10 @@ export const DrinkForm = () => {
     mode: "onBlur"
   });
 
-  const { register, control, reset, handleSubmit} = methods
+  const { register, control, handleSubmit} = methods
   const { fields, append, remove } = useFieldArray({name: "ingredients", control});
 
-  const mutation = useMutation({mutationFn : (extendedDrink  : ExtendedDrink,) => createDrink(extendedDrink, accessToken), 
+  const mutation = useMutation({mutationFn : (extendedDrink  : ExtendedDrink,) => createDrink(extendedDrink, accessToken, addToMenu), 
     onSuccess : () => {queryClient.invalidateQueries({queryKey :["user", accessToken]});}
   })
   
@@ -86,21 +88,21 @@ export const DrinkForm = () => {
     console.log(success)
     navigate(-1)
   }
-
-  return(<Container sx={{maxWidth:450, margin :5}}>
+  
+  return(<Container sx={{ display : 'flex', flexDirection :'column' }}>
     <Typography component={'h1'} variant='h5'>Register Your New Drink</Typography>
     <FormProvider {...methods}>
-    <Box component="form" onSubmit={handleSubmit(data => submit(data))} noValidate sx={{ mt: 1 }}>
-    <TextField
-      margin="normal"
-      required
-      fullWidth
-      id="drink-name"
-      label="Drink Name"
-      {...register(`drinkName` as const, {
-        required: true
-      })}
-    />
+    <Box component="form" onSubmit={handleSubmit(data => submit(data))} noValidate sx={{ mt: 1 }} id='form'>
+      <TextField
+        margin="normal"
+        required
+        fullWidth
+        id="drink-name"
+        label="Drink Name"
+        {...register(`drinkName` as const, {
+          required: true
+        })}
+      />
       <TextField
       margin="normal"
       required
@@ -122,6 +124,10 @@ export const DrinkForm = () => {
       })}
     />
     <DrinkIngredientForm ingredientFormProps={ingredientFormProps}/>
+    <FormControlLabel
+      control={<Checkbox checked={addToMenu} onChange={e => setAddToMenu(!addToMenu)}/>}
+      label="Add To Menu?" 
+    />
     <Button
       type="submit"
       fullWidth
@@ -130,6 +136,7 @@ export const DrinkForm = () => {
     >
       Create Drink
     </Button>
+    
   </Box>
   </FormProvider></Container>)
 }
