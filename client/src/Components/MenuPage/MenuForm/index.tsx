@@ -18,7 +18,8 @@ export const MenuForm = () => {
       title : menuTitleState[0],
       drinks : menuDrinksState[0],
       current : true,
-      specialtyIngredients : []
+      ingredients : [],
+      inProgess : true
     }
 
     createMenu(accessToken!, menu)
