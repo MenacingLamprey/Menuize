@@ -25,6 +25,7 @@ import { GuestPage } from './Components/GuestPage';
 import { IngredientForm } from './Components/IngredientPage/IngredientForm';
 
 import './App.css';
+import { BrandForm } from './Components/BrandForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -78,6 +79,7 @@ function App() {
           <Route path ="/ingredients/edit/:ingredientName" element={<IngredientEditForm />} />
           <Route path ="/ingredients/:ingredientName" element={<IngredientDetails />} />
           <Route path ="/ingredients/add-recipe/" element={<IngredientRecipeForm />} />
+          <Route path ='/brand-form/:ingredientName' element={<BrandForm />} />
         </Routes>
       </QueryClientProvider>
       </ThemeProvider>

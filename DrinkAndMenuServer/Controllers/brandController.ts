@@ -6,8 +6,7 @@ import { Recipe } from "../Models/Recipe"
 
 export const addBrandToIngredinet = async ( req : Request, res : Response) => {
   try {
-    const { ingredientName } = req.params 
-    const { brand } : {brand :IBrand} = req.body
+    const { brand, ingredientName } : {brand :IBrand, ingredientName : string} = req.body
     //find the brand, or create one with a name
     const [savedBrand] = await Brand.findOrCreate({where : { name : brand.name }})
     //update the brand with the rest of it's details

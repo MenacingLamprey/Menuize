@@ -37,9 +37,12 @@ export const IngredientEditForm = () => {
   }
 
   const editRecipe = () => {
-    console.log(thisIngredient)
     navigate(`/ingredients/add-recipe/`, {state:{ingredient :  thisIngredient}})
   }
+
+  const addBrand = () => {
+    navigate(`/brand-form/${thisIngredient.name}`)
+  } 
 
   return(<Container component={'form'} sx={{display : 'flex', flexDirection :'column', alignItems : 'center'}}>
     <Typography component={'h1'} variant="h4">{thisIngredient.name}</Typography>
@@ -64,7 +67,7 @@ export const IngredientEditForm = () => {
       
     </Box>
     }
-    <Button onClick ={()=>{}}>Add Brands</Button>
+    <Button onClick ={addBrand}>Add Brands</Button>
     <Button onClick={submit}>Submit</Button>
     </Box>
   </Container>)

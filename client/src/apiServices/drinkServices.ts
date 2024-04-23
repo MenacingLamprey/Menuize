@@ -1,4 +1,4 @@
-import { FormValues, IFormIngredient } from "../Components/DrinkForm/formTypes";
+import { FormValues } from "../Components/DrinkForm/formTypes";
 import { IDrink, IIngredient } from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001

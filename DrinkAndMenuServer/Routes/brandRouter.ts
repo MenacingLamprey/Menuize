@@ -3,4 +3,4 @@ import { addBrandToIngredinet } from "../Controllers/brandController";
 
 export const brandRouter = Router()
 
-brandRouter.use('/addBrand', addBrandToIngredinet)
+brandRouter.use('/create', addBrandToIngredinet)
