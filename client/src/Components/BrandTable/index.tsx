@@ -9,7 +9,7 @@ interface IProps {
 export const BrandTable = ({brands, isEditing} : IProps) => {
 
   return (<TableContainer component={Paper}>
-    <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <Table sx={{}} aria-label="simple table">
       <TableHead>
         <TableRow>
           <TableCell>Name</TableCell>
@@ -26,12 +26,8 @@ export const BrandTable = ({brands, isEditing} : IProps) => {
             <TableCell component="th" scope="row">
               {row.name}
             </TableCell>
-            {isEditing ? (<TableCell align="right">{row.price}</TableCell>) :(
-              <p>Edit</p>
-            )}
-            {isEditing ? (<TableCell align="right">{row.amount}</TableCell>) :(
-              <p>Edit</p>
-            )}
+            <TableCell align="right">{row.price}</TableCell>
+            <TableCell align="right">{row.amount}</TableCell>
             {isEditing && <TableCell><Button onClick={e => {}}>X</Button></TableCell>}
           </TableRow>
         ))}

@@ -6,6 +6,7 @@ import { IIngredient, IMemoryUser, IUser } from "../../apiTypes"
 import { deleteIngredient } from "../../apiServices/ingredientServices"
 import { fetchIngredient } from "../../Queries/fetchIngredient"
 import { fetchProfile } from "../../Queries/fetchProfile"
+import { BrandTable } from "../BrandTable"
 
 
 export const IngredientDetails = () => {
@@ -59,7 +60,7 @@ export const IngredientDetails = () => {
   if (!ingredient) {
     throw new Error("ingredient not found");
   }
-
+  console.log(ingredient)
   const { recipe, brands } = ingredient
   const childIngredients  = recipe?.childIngredients || []
   const editIngredient = () => {
@@ -90,7 +91,8 @@ export const IngredientDetails = () => {
       </Box>)
       : (brands  && brands.length > 0 &&   
         <Box>
-          <Typography variant ='h4'>Brands</Typography>
+          <Typography variant ='h6'>Brands</Typography>
+          <BrandTable brands={brands} isEditing={false} />
         </Box>
       )
     }

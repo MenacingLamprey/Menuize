@@ -77,9 +77,9 @@ export const getIngredient = async (req : RequestWithUser, res : Response) => {
       ]
     });
     console.log(rawIngredient)
-    const {id, name, family, recipe } = rawIngredient!.dataValues
-    const ingredient = {id, name, family, recipe}
-    console.log(recipe)
+    const {id, name, family, recipe, brands } = rawIngredient!.dataValues
+    const ingredient = {id, name, family, recipe, brands}
+    console.log(brands)
     return res.status(200).send({error : false, res : ingredient })
   } catch(e) {
     console.log(e)
