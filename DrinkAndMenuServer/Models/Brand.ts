@@ -11,13 +11,13 @@ export class Brand extends Model<IBrand, BrandCreationAttributes> {
     declare name :string
     declare price : number
     declare ingredient : Ingredient
-    declare recipe : Recipe
-
+    declare homeMaderecipe : Recipe
+    declare amount : string
 
     declare readonly createdAt: Date;
     declare readonly updatedAt: Date;
 
-    declare setRecipe : HasOneSetAssociationMixin<Recipe, Brand>
+    declare setHomeMadeRecipe : HasOneSetAssociationMixin<Recipe, Brand>
 
     public static associations: {
       ingredient : Association<Brand, Ingredient>
@@ -43,10 +43,11 @@ export class Brand extends Model<IBrand, BrandCreationAttributes> {
       },
       preferred : {
         type : DataTypes.BOOLEAN
+      },
+      amount : {
+        type : DataTypes.TEXT
       }
-      
     },
-
     {
       sequelize,
       tableName: "brands",

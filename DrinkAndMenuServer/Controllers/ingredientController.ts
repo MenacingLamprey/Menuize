@@ -6,6 +6,7 @@ import { IngredientFamily } from "../Models/IngredientFamily";
 import { IIngredient, IRecipe, IRecipeIngredient } from "../Models/modelTypes";
 import { RecipeIngredient } from "../Models/RecipeIngredient";
 import { Recipe } from "../Models/Recipe";
+import { Brand } from "../Models/Brand";
 
 
 export const createIngredient = async (req : RequestWithUser, res : Response) => {
@@ -47,7 +48,7 @@ export const editIngredient = async (req : RequestWithUser, res : Response) => {
     const userId = req.user!.getDataValue('uid')
     const { ingredientName, newFamily } = req.body
     console.log(ingredientName, newFamily)
-    const updatedIngredient = await Ingredient.update({family : newFamily}, {where : {userId, name :ingredientName}})
+    const updatedIngredient = await Ingredient.update({family : newFamily}, {where : {name :ingredientName}})
     IngredientFamily.findCreateFind({where : {name : newFamily}})
     return res.status(200).send({error : false, res : updatedIngredient})
   } catch(e) {
@@ -63,14 +64,18 @@ export const getIngredient = async (req : RequestWithUser, res : Response) => {
 
     const rawIngredient = await Ingredient.findOne({
       where : {name:ingredientName, isPublic : true},
-      include : [{
-        model : Recipe, as : 'recipe', 
-        include : [{
-          model :RecipeIngredient, as : 'childIngredients'
-        }]
-      }]
+      include : [
+        {
+          model : Recipe, as : 'recipe', 
+          include : [{
+            model :RecipeIngredient, as : 'childIngredients'
+          }]
+        },
+        {
+          model : Brand, as : 'brands'
+        } 
+      ]
     });
-    console.log('get ingredient')
     console.log(rawIngredient)
     const {id, name, family, recipe } = rawIngredient!.dataValues
     const ingredient = {id, name, family, recipe}

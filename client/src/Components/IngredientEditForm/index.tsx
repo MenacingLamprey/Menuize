@@ -41,9 +41,11 @@ export const IngredientEditForm = () => {
     navigate(`/ingredients/add-recipe/`, {state:{ingredient :  thisIngredient}})
   }
 
-  return(<Container component={'form'}>
+  return(<Container component={'form'} sx={{display : 'flex', flexDirection :'column', alignItems : 'center'}}>
     <Typography component={'h1'} variant="h4">{thisIngredient.name}</Typography>
+    <Box sx ={{display : 'flex', flexDirection : 'column', width : '40%'}}>
     <TextField
+    
       margin="normal"
       id="family"
       label="Family"
@@ -58,6 +60,12 @@ export const IngredientEditForm = () => {
     </Box>): (
       <Button onClick={editRecipe}>Add Recipe</Button>
     )}
+    {thisIngredient.brands && thisIngredient.brands.length > 0 && <Box>
+      
+    </Box>
+    }
+    <Button onClick ={()=>{}}>Add Brands</Button>
     <Button onClick={submit}>Submit</Button>
+    </Box>
   </Container>)
 }

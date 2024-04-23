@@ -55,12 +55,12 @@ export const IngredientDetails = () => {
   
   ingredient = ingredientResults?.data?.res
   user = userResults?.data
+
   if (!ingredient) {
     throw new Error("ingredient not found");
   }
 
-  const { recipe } = ingredient
-  console.log(recipe)
+  const { recipe, brands } = ingredient
   const childIngredients  = recipe?.childIngredients || []
   const editIngredient = () => {
     const ingredientRoute = `/ingredients/edit/${ingredientName}`
@@ -88,8 +88,13 @@ export const IngredientDetails = () => {
       <Typography >Recipe Yield: {recipe.yield}</Typography>
       <Typography >Instructions: {recipe.instructions}</Typography>
       </Box>)
-      : (<Typography/>)
-      }
+      : (brands  && brands.length > 0 &&   
+        <Box>
+          <Typography variant ='h4'>Brands</Typography>
+        </Box>
+      )
+    }
+        
     <Button onClick={removeIngredient}>Delete?</Button>
   </Container>)
 }

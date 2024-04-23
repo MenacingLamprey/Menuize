@@ -35,7 +35,7 @@ export const IngredientForm = () => {
     e.preventDefault()
     setIngredientName('')
     setFamily(family)
-    const ingredient : IIngredient = {name : ingredientName, family}
+    const ingredient : IIngredient = {name : ingredientName, family, brands :[]}
     const accessToken = localStorage.getItem('accessToken')
     const result = accessToken && await createIngredient(ingredient, accessToken)
   }

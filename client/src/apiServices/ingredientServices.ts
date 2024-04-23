@@ -1,6 +1,4 @@
-import { Details } from "@mui/icons-material";
 import { IIngredient, IRecipe } from "../apiTypes";
-import { IFormIngredient } from "../Components/DrinkForm/formTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 const apiUrl = `http://localhost:${apiPort}/ingredients`;
@@ -13,7 +11,7 @@ export const fetchUserIngredient =async (name :string, accessToken : string) => 
       Authorization: `Bearer ${accessToken}`,
     }
   }
-  const res = await fetch(`${apiUrl}/${name}`, fetchOptions)
+  const res = await fetch(`${apiUrl}/get/${name}`, fetchOptions)
   return res
 }
 
@@ -45,8 +43,9 @@ export const editIngredient = async (ingredientName : string, newFamily : string
     },
     body: JSON.stringify({ingredientName, newFamily})
   }
-  const res = await fetch(`${apiUrl}/edit`, fetchOptions)
+  const res = await fetch(`${apiUrl}/edit/Family`, fetchOptions)
   const data = await res.json()
+  console.log(data)
   return data.res
 }
 

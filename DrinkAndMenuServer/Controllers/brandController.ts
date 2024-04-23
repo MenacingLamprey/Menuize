@@ -7,9 +7,9 @@ import { Recipe } from "../Models/Recipe"
 export const addBrandToIngredinet = async ( req : Request, res : Response) => {
   try {
     const { ingredientName } = req.params 
-    const { brand } : {brand :IBrand}= req.body
+    const { brand } : {brand :IBrand} = req.body
     //find the brand, or create one with a name
-    const [savedBrand,created] = await Brand.findOrCreate({where : { name : brand.name }})
+    const [savedBrand] = await Brand.findOrCreate({where : { name : brand.name }})
     //update the brand with the rest of it's details
     await savedBrand.update(brand)
 
@@ -19,16 +19,16 @@ export const addBrandToIngredinet = async ( req : Request, res : Response) => {
     
     //if recipe is attached, find recipe, update it with details, associate brand with recipe
     //and associate recipe with ingredient
-    const { recipe } = brand
-    if (recipe) {
+    const { homeMadeRecipe } = brand
+    if (homeMadeRecipe) {
       const [savedrecipe] = await Recipe.findOrCreate({where :{ingredientId :ingredient.id}})
-      await savedrecipe.update(recipe)
-      await savedBrand.setRecipe(savedrecipe)
+      await savedrecipe.update(homeMadeRecipe)
+      await savedBrand.setHomeMadeRecipe(savedrecipe)
       await ingredient.setRecipe(savedrecipe)
     }
     //annd brand to ingredient
     await ingredient.addBrand(savedBrand)
-    return res.status(201).send({error : false , res : {ingredient, brand, recipe}})
+    return res.status(201).send({error : false , res : {ingredient, brand, homeMadeRecipe}})
   } catch (e) { 
     return res.status(500).send({error : true, res : "Error Adding Brand To Recipe"})
   }

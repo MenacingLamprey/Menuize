@@ -90,7 +90,7 @@ Drink.belongsToMany(Ingredient, {through : DrinkIngredient})
 Ingredient.hasMany(Brand, {as : 'brands'})
 Brand.belongsTo(Ingredient, {as : 'ingredint'})
 
-Brand.hasOne(Recipe, {as : 'homeMade'})
+Brand.hasOne(Recipe, {as : 'homeMadeRecipe'})
 Recipe.belongsTo(Brand)
 
 Recipe.belongsTo(Ingredient, {as : 'ingredient'})
