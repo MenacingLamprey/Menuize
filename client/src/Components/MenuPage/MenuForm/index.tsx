@@ -50,15 +50,15 @@ export const MenuForm = () => {
     navigate(-1)
   }
 
-  return (<Container> 
-  <h1>Create Your Menu</h1>
+  return (<Container sx={{padding : 0}}> 
+  <Typography variant ='h5'> Create Your Menu </Typography>
     <Box sx={{display : 'flex'}}>
-      <Box sx ={{maxWidth : '55%'}}> 
+      <Box sx ={{display :'flex', flexDirection : 'column'}}> 
         <MenuTitle menuTitleState={menuTitleState}/>
         {menuDrinksState[0].length> 0 && <Typography variant="h6">Drinks</Typography> }
         <MenuDrinks menuDrinksState={menuDrinksState} />
       </Box>  
-      <Box sx={{minWidth:'45%'}}>
+      <Box sx={{}}>
         <DrinkCoral menuDrinksState={menuDrinksState} />
       </Box>
     </Box>

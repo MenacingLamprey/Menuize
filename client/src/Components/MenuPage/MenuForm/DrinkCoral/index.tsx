@@ -39,7 +39,7 @@ export const DrinkCoral = ({menuDrinksState} : IProps) => {
     setSearchableDrinks(searchDrinks)
   } 
 
-  return (<Container sx={{display : 'flex', flexDirection :'column', alignItems :'center', width:'100%'}}>
+  return (<Container sx={{display : 'flex', flexDirection :'column', alignItems :'center'}}>
     <Typography variant="h5">Search</Typography>
     <DrinkSearchBar drinks={allDrinks} addDrink={drinkName => handleDrinkSelect(drinkName)}/>
   </Container>)

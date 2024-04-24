@@ -13,16 +13,16 @@ export const MenuTitle = ({menuTitleState} : IProps) => {
     {addingTitle ? (
     <TextField
       id="outlined-basic"
-      label="Menu Title"
       variant="outlined"
+      label="Menu Title"
       value={menuTitle}
       onChange={e => setMenuTitle(e.target.value)}
     /> ) : (
-      <Typography variant ='h4'> {menuTitle}</Typography>
+      <Typography variant ='h6'> {menuTitle}</Typography>
     )} 
     {addingTitle ? (
       <Button onClick={()=>setAddingTitle(!addingTitle)}>Set Title</Button> )
-      : ( <Button onClick={()=>setAddingTitle(!addingTitle)}>edit</Button>
+      : ( <Button onClick={()=>setAddingTitle(!addingTitle)}>✎</Button>
       )}
     </Container>
   )
