@@ -3,7 +3,7 @@ export interface IIngredient {
   name: string
   recipe? : IRecipe
   family? : string
-  homeMade? : boolean
+  brands? : IBrand[]
   Drinks ? : IDrink[]
   userId ? : string
   updatedAt? : string
@@ -83,4 +83,15 @@ export interface IRecipeIngredient {
   measurement : string
   childIngredient? : number
   childIngredientName : string
+}
+
+
+export interface IBrand {
+  id? : number
+  name : string
+  price : number
+  amount : string
+  preferred : boolean
+  ingredient? : IIngredient
+  homeMadeRecipe ? : IRecipe
 }

@@ -1,6 +1,4 @@
-import { Details } from "@mui/icons-material";
-import { IIngredient, IRecipe } from "../apiTypes";
-import { IFormIngredient } from "../Components/DrinkForm/formTypes";
+import { IBrand, IIngredient, IRecipe } from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 const apiUrl = `http://localhost:${apiPort}/ingredients`;
@@ -13,7 +11,7 @@ export const fetchUserIngredient =async (name :string, accessToken : string) => 
       Authorization: `Bearer ${accessToken}`,
     }
   }
-  const res = await fetch(`${apiUrl}/${name}`, fetchOptions)
+  const res = await fetch(`${apiUrl}/get/${name}`, fetchOptions)
   return res
 }
 
@@ -36,17 +34,19 @@ export const createIngredient = async (ingredient : IIngredient, accessToken : s
   return data.res
 }
 
-export const editIngredient = async (ingredientName : string, newFamily : string, accessToken : string) => {
+interface IUpdates {newFamily : string, updatedBrands? : IBrand[]}
+export const editIngredient = async (ingredientName : string, updates : IUpdates, accessToken : string) => {
   const fetchOptions = { 
     method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ingredientName, newFamily})
+    body: JSON.stringify({ingredientName, updates})
   }
-  const res = await fetch(`${apiUrl}/edit`, fetchOptions)
+  const res = await fetch(`${apiUrl}/edit/update`, fetchOptions)
   const data = await res.json()
+  console.log(data)
   return data.res
 }
 

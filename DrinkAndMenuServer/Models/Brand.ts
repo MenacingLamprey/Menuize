@@ -1,21 +1,27 @@
-import { Model, Optional, DataTypes, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, Association } from "sequelize";
+import { Model, Optional, DataTypes, HasManyAddAssociationsMixin, HasManyGetAssociationsMixin, Association, HasOneSetAssociationMixin } from "sequelize";
 
 import { sequelize } from ".";
 import { Ingredient } from "./Ingredient";
 import { IBrand } from './modelTypes';
+import { Recipe } from "./Recipe";
 
 type BrandCreationAttributes = Optional<IBrand, "id">;
 
 export class Brand extends Model<IBrand, BrandCreationAttributes> {
-    public name! :string
-    public price! : number
+    declare name :string
+    declare price : number
+    declare ingredient : Ingredient
+    declare homeMaderecipe : Recipe
+    declare amount : string
 
-    public readonly createdAt!: Date;
-    public readonly updatedAt!: Date;
+    declare readonly createdAt: Date;
+    declare readonly updatedAt: Date;
 
+    declare setHomeMadeRecipe : HasOneSetAssociationMixin<Recipe, Brand>
 
     public static associations: {
-      Ingredients : Association<Brand, Ingredient>
+      ingredient : Association<Brand, Ingredient>
+      recipe : Association<Brand, Recipe>
     };
 
   }
@@ -33,10 +39,15 @@ export class Brand extends Model<IBrand, BrandCreationAttributes> {
       },
       price: {
         type: DataTypes.FLOAT,
-      },
-      
-    },
 
+      },
+      preferred : {
+        type : DataTypes.BOOLEAN
+      },
+      amount : {
+        type : DataTypes.TEXT
+      }
+    },
     {
       sequelize,
       tableName: "brands",

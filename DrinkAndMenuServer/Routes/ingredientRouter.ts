@@ -13,7 +13,7 @@ import {
     addRecipeToIngredient,
     editIngredientRecipe,
     getPublicIngredient
-    } from '../Controllers/ingredientController'
+} from '../Controllers/ingredientController'
 
 interface RequestWithUser extends Request {
     user?: User
@@ -25,11 +25,11 @@ ingredientRouter.post('/create', (req : Request, res : Response) => {
     authMiddleware(req as RequestWithUser, res, createIngredient)
 })
 
-ingredientRouter.post('/:ingredientName', (req : Request, res : Response) => {
+ingredientRouter.post('/get/:ingredientName', (req : Request, res : Response) => {
     authMiddleware(req as RequestWithUser, res, getIngredient)
 })
 
-ingredientRouter.patch('/edit', (req : Request, res : Response) => {
+ingredientRouter.patch('/edit/update', (req : Request, res : Response) => {
     authMiddleware(req as RequestWithUser, res, editIngredient)
 })
 

@@ -77,7 +77,7 @@ export const DrinkForm = () => {
 
   const { ingredients } = user
  
-  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients,register}
+  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients, register}
 
   const submit = async (data : FormValues) => {
     const {drinkName, glass, ingredients : usedIngredients, method } = data
@@ -89,7 +89,7 @@ export const DrinkForm = () => {
     navigate(-1)
   }
   
-  return(<Container sx={{ display : 'flex', flexDirection :'column' }}>
+  return(<Container sx={{ display : 'flex', flexDirection :'column', padding : '5%'}}>
     <Typography component={'h1'} variant='h5'>Register Your New Drink</Typography>
     <FormProvider {...methods}>
     <Box component="form" onSubmit={handleSubmit(data => submit(data))} noValidate sx={{ mt: 1 }} id='form'>

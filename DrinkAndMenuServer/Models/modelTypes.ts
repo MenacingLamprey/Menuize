@@ -53,6 +53,10 @@ export interface IBrand {
   id : number
   name : string
   price : number
+  preferred : boolean
+  amount : string
+  ingredient? : IIngredient
+  homeMadeRecipe ? : IRecipe
 }
 
 export interface IRecipe {

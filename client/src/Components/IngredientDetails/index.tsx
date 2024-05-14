@@ -6,6 +6,7 @@ import { IIngredient, IMemoryUser, IUser } from "../../apiTypes"
 import { deleteIngredient } from "../../apiServices/ingredientServices"
 import { fetchIngredient } from "../../Queries/fetchIngredient"
 import { fetchProfile } from "../../Queries/fetchProfile"
+import { BrandTable } from "../BrandTable"
 
 
 export const IngredientDetails = () => {
@@ -55,12 +56,12 @@ export const IngredientDetails = () => {
   
   ingredient = ingredientResults?.data?.res
   user = userResults?.data
+
   if (!ingredient) {
     throw new Error("ingredient not found");
   }
-
-  const { recipe } = ingredient
-  console.log(recipe)
+  console.log(ingredient)
+  const { recipe, brands } = ingredient
   const childIngredients  = recipe?.childIngredients || []
   const editIngredient = () => {
     const ingredientRoute = `/ingredients/edit/${ingredientName}`
@@ -88,8 +89,14 @@ export const IngredientDetails = () => {
       <Typography >Recipe Yield: {recipe.yield}</Typography>
       <Typography >Instructions: {recipe.instructions}</Typography>
       </Box>)
-      : (<Typography/>)
-      }
+      : (brands  && brands.length > 0 &&   
+        <Box>
+          <Typography variant ='h6'>Brands</Typography>
+          <BrandTable brandStates={brands} />
+        </Box>
+      )
+    }
+        
     <Button onClick={removeIngredient}>Delete?</Button>
   </Container>)
 }

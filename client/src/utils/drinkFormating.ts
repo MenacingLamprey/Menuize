@@ -20,7 +20,7 @@ export const formatIngredients = (formIngredients : IFormIngredient[], potential
     })
 
     if(existingIngredients.length === 0) {
-      const newIngredient : IIngredient  = {name : ingredient.ingredient, family :'', DrinkIngredient : measure}
+      const newIngredient : IIngredient  = {name : ingredient.ingredient, family :'', DrinkIngredient : measure, brands :[]}
       formattedIngredients.newIngredients.push(newIngredient)
       formattedIngredients.drinkIngredients.push(newIngredient)
     } else {

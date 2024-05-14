@@ -15,6 +15,7 @@ import { IIngredient, IRecipe, IRecipeIngredient } from './modelTypes';
 import { User } from "./User";
 import { RecipeIngredient } from "./RecipeIngredient";
 import { Recipe } from "./Recipe";
+import { Brand } from "./Brand";
 
 type IngredientCreationAttributes = Optional<IIngredient, "id">;
 
@@ -39,11 +40,15 @@ export class Ingredient extends Model<IIngredient, IngredientCreationAttributes>
 
   public addDrink!: HasManyAddAssociationMixin<Ingredient, string>;
   public removeDrink!: HasManyAddAssociationMixin<Ingredient, string>;
+
   public addIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
   public removeIngredient!: HasManyAddAssociationMixin<Ingredient, string>;
+
   declare createRecipe : HasOneCreateAssociationMixin<Recipe>
   declare setRecipe : HasOneSetAssociationMixin<Recipe, Ingredient>
   declare getRecipe : HasOneGetAssociationMixin<Recipe>
+
+  declare addBrand :  HasManyAddAssociationMixin<Ingredient, Brand>
 }
   
 Ingredient.init(
@@ -82,8 +87,13 @@ Ingredient.init(
 Ingredient.belongsToMany(Drink, { through: DrinkIngredient});
 Drink.belongsToMany(Ingredient, {through : DrinkIngredient})
 
-Recipe.belongsTo(Ingredient, {as : 'ingredient'})
+Ingredient.hasMany(Brand, {as : 'brands'})
+Brand.belongsTo(Ingredient, {as : 'ingredint'})
 
+Brand.hasOne(Recipe, {as : 'homeMadeRecipe'})
+Recipe.belongsTo(Brand)
+
+Recipe.belongsTo(Ingredient, {as : 'ingredient'})
 Ingredient.hasOne(Recipe, {as : 'ingredient'})
 Recipe.hasOne(Ingredient, {as : 'recipe'})
 Ingredient.belongsTo(Recipe, {as : 'recipe'})

@@ -34,7 +34,7 @@ export const DrinkPage = () => {
   }
   const {drinks, ingredients} = results.data
 
-  return (<Container id={"drink-page"} component="main" maxWidth="xs">
+  return (<Container id={"drink-page"} component="main" maxWidth="xs" sx={{padding : '5%'}}>
     <Box>
       <Typography component="h1" variant="h5" maxWidth="xs">
         Here's a few of your recently created Drinks      

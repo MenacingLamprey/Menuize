@@ -1,16 +1,16 @@
+//node_modules
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider, createTheme } from '@mui/material';
 
+//Utilities
+import { Auth } from './utils/Auth';
+
+//Componenets
 import { LandingPage } from './Components/LandingPage';
 import { Profile } from './Components/Profile';
 import { IngredientPage } from './Components/IngredientPage';
-
-import { Auth } from './utils/Auth';
-import { IDrink, IIngredient, IMemoryUser } from './apiTypes';
-
-import './App.css';
 import { DrinkPage } from './Components/DrinkPage';
 import { DrinkDetails } from './Components/DrinkDetails';
 import { IngredientDetails } from './Components/IngredientDetails';
@@ -23,6 +23,9 @@ import { MenuPage } from './Components/MenuPage';
 import { MenuForm } from './Components/MenuPage/MenuForm';
 import { GuestPage } from './Components/GuestPage';
 import { IngredientForm } from './Components/IngredientPage/IngredientForm';
+
+import './App.css';
+import { BrandForm } from './Components/BrandForm';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -76,6 +79,7 @@ function App() {
           <Route path ="/ingredients/edit/:ingredientName" element={<IngredientEditForm />} />
           <Route path ="/ingredients/:ingredientName" element={<IngredientDetails />} />
           <Route path ="/ingredients/add-recipe/" element={<IngredientRecipeForm />} />
+          <Route path ='/brand-form/:ingredientName' element={<BrandForm />} />
         </Routes>
       </QueryClientProvider>
       </ThemeProvider>
