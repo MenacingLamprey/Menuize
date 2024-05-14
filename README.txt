@@ -1,9 +1,9 @@
 In Progress
 
-in create drink path, adding "add to menu" functionality 
+creating associating brand to ingredient, needs to correctly submit to server and cache result
 
 TODO
 
 Create more robust search with appropraite ingredient substitutions
 
-begin to associate brands to ingredients
+create new page specifically for selecting brand

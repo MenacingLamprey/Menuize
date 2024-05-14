@@ -29,7 +29,7 @@ ingredientRouter.post('/get/:ingredientName', (req : Request, res : Response) =>
     authMiddleware(req as RequestWithUser, res, getIngredient)
 })
 
-ingredientRouter.patch('/edit/Family', (req : Request, res : Response) => {
+ingredientRouter.patch('/edit/update', (req : Request, res : Response) => {
     authMiddleware(req as RequestWithUser, res, editIngredient)
 })
 

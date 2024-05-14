@@ -46,9 +46,15 @@ export const getAllUserIngredients = async (req: Request, res :Response) => {
 export const editIngredient = async (req : RequestWithUser, res : Response) => {
   try {
     const userId = req.user!.getDataValue('uid')
-    const { ingredientName, newFamily } = req.body
+    const { ingredientName, updates } = req.body
+    const {newFamily, updatedBrands} = updates
     console.log(ingredientName, newFamily)
-    const updatedIngredient = await Ingredient.update({family : newFamily}, {where : {name :ingredientName}})
+    const updatedIngredient = await Ingredient.update(
+      {family : newFamily, brands : updatedBrands},
+      {where : {name :ingredientName}},
+    )
+    console.log(updatedIngredient)
+
     IngredientFamily.findCreateFind({where : {name : newFamily}})
     return res.status(200).send({error : false, res : updatedIngredient})
   } catch(e) {

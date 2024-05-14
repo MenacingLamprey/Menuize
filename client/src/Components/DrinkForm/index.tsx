@@ -77,7 +77,7 @@ export const DrinkForm = () => {
 
   const { ingredients } = user
  
-  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients,register}
+  const ingredientFormProps = {fields, append, remove, potentialIngredients : ingredients, register}
 
   const submit = async (data : FormValues) => {
     const {drinkName, glass, ingredients : usedIngredients, method } = data

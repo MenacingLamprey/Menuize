@@ -92,7 +92,7 @@ export const IngredientDetails = () => {
       : (brands  && brands.length > 0 &&   
         <Box>
           <Typography variant ='h6'>Brands</Typography>
-          <BrandTable brands={brands} isEditing={false} />
+          <BrandTable brandStates={brands} />
         </Box>
       )
     }

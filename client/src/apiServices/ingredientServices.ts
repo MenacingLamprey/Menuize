@@ -1,4 +1,4 @@
-import { IIngredient, IRecipe } from "../apiTypes";
+import { IBrand, IIngredient, IRecipe } from "../apiTypes";
 
 const apiPort = import.meta.env.VITE_DRINK_API_URL || 3001
 const apiUrl = `http://localhost:${apiPort}/ingredients`;
@@ -34,16 +34,17 @@ export const createIngredient = async (ingredient : IIngredient, accessToken : s
   return data.res
 }
 
-export const editIngredient = async (ingredientName : string, newFamily : string, accessToken : string) => {
+interface IUpdates {newFamily : string, updatedBrands? : IBrand[]}
+export const editIngredient = async (ingredientName : string, updates : IUpdates, accessToken : string) => {
   const fetchOptions = { 
     method: "PATCH",
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ingredientName, newFamily})
+    body: JSON.stringify({ingredientName, updates})
   }
-  const res = await fetch(`${apiUrl}/edit/Family`, fetchOptions)
+  const res = await fetch(`${apiUrl}/edit/update`, fetchOptions)
   const data = await res.json()
   console.log(data)
   return data.res
