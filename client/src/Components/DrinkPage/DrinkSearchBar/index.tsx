@@ -26,7 +26,7 @@ export const DrinkSearchBar = ({drinks, addDrink} : IProps) => {
 
   return (<Container>
   <form id="search-form">
-    <TextField sx={{width :175}}
+    <TextField
       id="search-bar"
       className="text"
       onChange={(e) => {

@@ -11,7 +11,7 @@ export const NavBar = () => {
   const nav = useNavigate()
 
   return (
-    <AppBar position="static" sx={{backgroundColor :'#282c34'}}>
+    <AppBar position="static" sx={{backgroundColor :'#282c34', width :'100%'}}>
       <Container>
         <Toolbar disableGutters>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'flex' } }}>
